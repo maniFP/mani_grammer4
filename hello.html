@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفترچه گرامر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #16211c;
+    --panel: #1d2b23;
+    --panel-alt: #24352c;
+    --border: #3a4c40;
+    --border-soft: #2c3d33;
+    --text: #ece7d9;
+    --text-muted: #a7b6ac;
+    --text-faint: #758077;
+    --accent: #e7b740;
+    --accent-soft: #4a4327;
+    --accent-2: #8bb59a;
+    --danger: #e2725b;
+    --danger-soft: #402c26;
+    --success: #8fbf8a;
+    --success-soft: #26382a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 15% 0%, #1b2a22 0%, var(--bg) 55%);
+    color:var(--text);
+    font-family:'Vazirmatn', sans-serif;
+    min-height:100vh;
+  }
+  .en{ font-family:'Space Grotesk', sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .disp{ font-family:'Fraunces', serif; direction:ltr; unicode-bidi:isolate; }
+
+  ::selection{ background:var(--accent-soft); }
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:18px 28px;
+    border-bottom:1px solid var(--border-soft);
+    position:sticky; top:0; z-index:20;
+    background:rgba(22,33,28,0.92);
+    backdrop-filter: blur(6px);
+  }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand .chalk-mark{
+    width:10px; height:10px; border-radius:2px; background:var(--accent);
+    transform:rotate(8deg);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .brand h1{ font-size:20px; margin:0; font-weight:700; letter-spacing:.2px;}
+  .brand span.sub{ font-size:12px; color:var(--text-faint); font-family:'Space Grotesk',sans-serif; direction:ltr;}
+  nav.tabs{ display:flex; gap:6px; }
+  nav.tabs button{
+    background:transparent; border:1px solid var(--border);
+    color:var(--text-muted); padding:8px 16px; border-radius:8px;
+    font-family:inherit; font-size:14px; cursor:pointer;
+    transition:.15s ease;
+  }
+  nav.tabs button:hover{ border-color:var(--accent-2); color:var(--text); }
+  nav.tabs button.active{ background:var(--panel-alt); border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- Layout ---------- */
+  .layout{ display:flex; max-width:1280px; margin:0 auto; min-height:calc(100vh - 68px); }
+  aside{
+    width:270px; flex-shrink:0;
+    border-left:1px solid var(--border-soft);
+    padding:22px 16px; height:calc(100vh - 68px); overflow-y:auto;
+    position:sticky; top:68px;
+  }
+  aside::-webkit-scrollbar{ width:6px; }
+  aside::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+
+  .cat{ margin-bottom:6px; }
+  .cat-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 10px; cursor:pointer; border-radius:8px;
+    color:var(--text); font-size:14.5px; font-weight:600;
+  }
+  .cat-head:hover{ background:var(--panel); }
+  .cat-head .arrow{ color:var(--text-faint); font-size:11px; transition:transform .15s; }
+  .cat.open .arrow{ transform:rotate(90deg); }
+  .cat-list{ display:none; padding:2px 6px 10px 6px; }
+  .cat.open .cat-list{ display:block; }
+  .topic-btn{
+    display:block; width:100%; text-align:right; background:none; border:none;
+    color:var(--text-muted); font-family:inherit; font-size:13.5px;
+    padding:8px 10px; border-radius:7px; cursor:pointer; line-height:1.5;
+  }
+  .topic-btn:hover{ background:var(--panel); color:var(--text); }
+  .topic-btn.active{ background:var(--accent-soft); color:var(--accent); font-weight:600; }
+  .topic-btn .en{ display:block; font-size:11.5px; color:var(--text-faint); }
+  .topic-btn.active .en{ color:var(--accent); opacity:.75; }
+  .topic-btn{ position:relative; padding-left:26px; }
+  .topic-btn .done-mark{
+    position:absolute; left:8px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; border-radius:50%; background:var(--success-soft);
+    color:var(--success); font-size:10px; display:none; align-items:center; justify-content:center;
+  }
+  .topic-btn.done .done-mark{ display:flex; }
+
+  .sidebar-search{
+    width:100%; background:var(--panel); border:1px solid var(--border-soft); color:var(--text);
+    border-radius:9px; padding:9px 12px; font-family:inherit; font-size:13px; margin-bottom:14px;
+  }
+  .sidebar-search:focus{ outline:none; border-color:var(--accent); }
+  .sidebar-search::placeholder{ color:var(--text-faint); }
+  .cat.hidden-by-search, .topic-btn.hidden-by-search{ display:none !important; }
+
+  main{ flex:1; padding:32px 40px; min-width:0; }
+
+  /* ---------- Topic view ---------- */
+  .topic-header{ margin-bottom:22px; }
+  .topic-header .level{
+    display:inline-block; font-size:11px; padding:3px 10px; border-radius:20px;
+    border:1px solid var(--border); color:var(--text-faint); margin-bottom:12px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  .topic-header h2{ font-size:30px; margin:0 0 4px 0; font-family:'Fraunces',serif; font-weight:600; direction:ltr; text-align:right; }
+  .topic-header .fa-title{ font-size:16px; color:var(--text-muted); font-weight:500; }
+
+  .card{
+    background:var(--panel); border:1px solid var(--border-soft);
+    border-radius:14px; padding:24px; margin-bottom:20px;
+  }
+  .card h3{ margin:0 0 14px 0; font-size:15px; color:var(--accent-2); font-weight:700; }
+  .formula{
+    font-family:'Space Grotesk',sans-serif; direction:ltr; text-align:center;
+    background:var(--panel-alt); border:1px dashed var(--border); border-radius:10px;
+    padding:16px; font-size:17px; color:var(--accent); margin-bottom:16px; letter-spacing:.3px;
+  }
+  .explain{ line-height:2.1; font-size:15px; color:var(--text); margin:0; }
+
+  .examples{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px; }
+  .examples li{ border-bottom:1px dashed var(--border-soft); padding-bottom:12px; }
+  .examples li:last-child{ border-bottom:none; padding-bottom:0; }
+  .examples .en-ex{ font-family:'Space Grotesk',sans-serif; direction:ltr; text-align:left; font-size:15.5px; color:var(--text); }
+  .examples .fa-ex{ font-size:13.5px; color:var(--text-muted); margin-top:3px; }
+
+  .video-link{
+    display:inline-flex; align-items:center; gap:8px; margin-top:6px;
+    background:var(--panel-alt); border:1px solid var(--border); color:var(--text);
+    text-decoration:none; padding:10px 16px; border-radius:9px; font-size:13.5px;
+    transition:.15s;
+  }
+  .video-link:hover{ border-color:var(--danger); color:var(--danger); }
+
+  textarea, input[type=text]{
+    width:100%; background:var(--panel-alt); border:1px solid var(--border);
+    color:var(--text); border-radius:10px; padding:14px; font-family:'Space Grotesk',sans-serif;
+    direction:ltr; text-align:left; font-size:14.5px; resize:vertical;
+  }
+  textarea:focus, input:focus{ outline:none; border-color:var(--accent); }
+  .row-btn{ display:flex; justify-content:flex-end; margin-top:10px; }
+  button.primary{
+    background:var(--accent); border:none; color:#1b1607; font-weight:700;
+    padding:10px 22px; border-radius:9px; font-family:inherit; font-size:14px; cursor:pointer;
+    transition:.15s;
+  }
+  button.primary:hover{ filter:brightness(1.08); }
+  button.primary:disabled{ opacity:.55; cursor:progress; }
+
+  .result-box{
+    margin-top:14px; padding:14px 16px; border-radius:10px; font-size:14.5px; line-height:2;
+    display:none; white-space:pre-wrap;
+  }
+  .result-box.show{ display:block; }
+  .result-box.ok{ background:var(--success-soft); border:1px solid var(--success); color:var(--success); }
+  .result-box.bad{ background:var(--danger-soft); border:1px solid var(--danger); color:var(--danger); }
+  .result-box.neutral{ background:var(--panel-alt); border:1px solid var(--border); color:var(--text); }
+
+  /* quiz */
+  .quiz-q{ margin-bottom:18px; }
+  .quiz-q p.q-text{ font-size:14.5px; margin:0 0 10px 0; }
+  .quiz-q .opts{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{
+    display:block; text-align:right; width:100%; background:var(--panel-alt);
+    border:1px solid var(--border); color:var(--text); padding:10px 14px;
+    border-radius:8px; cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:13.5px;
+    direction:ltr; text-align:left;
+  }
+  .quiz-opt:hover{ border-color:var(--accent-2); }
+  .quiz-opt.correct{ background:var(--success-soft); border-color:var(--success); }
+  .quiz-opt.wrong{ background:var(--danger-soft); border-color:var(--danger); }
+  .quiz-opt[disabled]{ cursor:default; }
+  .quiz-exp{ font-size:13px; color:var(--text-muted); margin-top:8px; display:none; }
+  .quiz-exp.show{ display:block; }
+
+  /* analyzer tab */
+  .analyzer-wrap{ max-width:760px; }
+  .analyzer-wrap h2{ font-family:'Fraunces',serif; font-size:26px; margin:0 0 6px 0; }
+  .analyzer-wrap p.hint{ color:var(--text-muted); font-size:14px; margin:0 0 18px 0; line-height:1.9; }
+
+  .welcome{ max-width:640px; }
+  .welcome h2{ font-family:'Vazirmatn', sans-serif; font-size:32px; margin:0 0 10px 0; }
+  .welcome p{ color:var(--text-muted); line-height:2; font-size:15px; }
+
+  /* ---------- Learning Path ---------- */
+  .path-wrap{ max-width:920px; }
+  .path-wrap h2{ font-family:'Fraunces',serif; font-size:28px; margin:0 0 6px 0; }
+  .path-wrap p.hint{ color:var(--text-muted); font-size:14px; margin:0 0 22px 0; line-height:1.9; }
+
+  .overall-progress{
+    background:var(--panel); border:1px solid var(--border-soft); border-radius:14px;
+    padding:20px 22px; margin-bottom:26px;
+  }
+  .overall-progress .row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .overall-progress .row strong{ font-size:15px; color:var(--text); }
+  .overall-progress .row span{ font-size:13px; color:var(--accent); font-family:'Space Grotesk',sans-serif; direction:ltr; }
+  .progress-track{ width:100%; height:9px; border-radius:6px; background:var(--panel-alt); overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius:6px; transition:width .4s ease; }
+
+  .level-block{ margin-bottom:28px; }
+  .level-block-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .level-badge{
+    font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; color:#1b1607;
+    background:var(--accent); padding:4px 12px; border-radius:20px;
+  }
+  .level-block-head h3{ margin:0; font-size:16px; color:var(--text); font-weight:700; }
+  .level-block-head .mini-progress{ margin-right:auto; font-size:12px; color:var(--text-faint); font-family:'Space Grotesk',sans-serif; direction:ltr; }
+
+  .path-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:12px; }
+  .path-card{
+    background:var(--panel); border:1px solid var(--border-soft); border-radius:12px;
+    padding:14px 16px; cursor:pointer; transition:.15s; position:relative;
+  }
+  .path-card:hover{ border-color:var(--accent-2); transform:translateY(-2px); }
+  .path-card.done{ border-color:var(--success); background:var(--success-soft); }
+  .path-card .step-no{
+    font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--text-faint);
+    display:flex; align-items:center; gap:6px; margin-bottom:6px;
+  }
+  .path-card.done .step-no{ color:var(--success); }
+  .path-card .en{ font-family:'Space Grotesk',sans-serif; font-size:14.5px; color:var(--text); direction:ltr; text-align:left; display:block; }
+  .path-card .fa{ font-size:12.5px; color:var(--text-muted); margin-top:2px; }
+  .path-card .check-icon{
+    position:absolute; top:12px; left:12px; width:20px; height:20px; border-radius:50%;
+    background:var(--success); color:#0e1a13; font-size:12px; display:none; align-items:center; justify-content:center;
+  }
+  .path-card.done .check-icon{ display:flex; }
+
+  .level-complete-banner{
+    margin-top:10px; padding:10px 14px; border-radius:9px; background:var(--success-soft);
+    border:1px solid var(--success); color:var(--success); font-size:13px; display:none;
+  }
+  .level-block.all-done .level-complete-banner{ display:block; }
+
+  .mark-learned-btn{
+    display:inline-flex; align-items:center; gap:8px; background:var(--panel-alt); border:1px solid var(--border);
+    color:var(--text); padding:10px 18px; border-radius:9px; font-family:inherit; font-size:13.5px; cursor:pointer;
+    transition:.15s;
+  }
+  .mark-learned-btn:hover{ border-color:var(--success); color:var(--success); }
+  .mark-learned-btn.is-done{ background:var(--success-soft); border-color:var(--success); color:var(--success); }
+
+  .usage-list{ margin:0; padding-right:20px; display:flex; flex-direction:column; gap:10px; }
+  .usage-list li{ font-size:14.5px; line-height:1.9; color:var(--text); }
+  .usage-list li .en, .usage-list li{ direction:rtl; }
+
+  .mistake-card{ border-color:var(--danger); background:var(--danger-soft); }
+  .mistake-card h3{ color:var(--danger); }
+  .mistake-card .explain{ color:var(--text); }
+
+  .mobile-back{
+    display:none; align-items:center; gap:6px; margin-bottom:18px;
+    background:var(--panel-alt); border:1px solid var(--border); color:var(--text);
+    padding:10px 16px; border-radius:9px; font-size:13.5px; cursor:pointer; font-family:inherit;
+  }
+  .mobile-back:hover{ border-color:var(--accent); color:var(--accent); }
+
+  @media (max-width: 860px){
+    .layout{ flex-direction:column; }
+    aside{ width:100%; height:auto; position:relative; top:0; border-left:none; border-bottom:1px solid var(--border-soft); }
+    main{ padding:24px 18px; }
+
+    body.mobile-detail aside{ display:none; }
+    body.mobile-detail .layout{ display:block; }
+    body.mobile-detail main{ padding-top:18px; }
+    body.mobile-detail .mobile-back{ display:inline-flex; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="chalk-mark"></span>
+    <h1>دفترچه گرامر</h1>
+    <span class="sub">English Grammar Notebook</span>
+  </div>
+  <nav class="tabs">
+    <button id="tab-topics" class="active">گرامرها</button>
+    <button id="tab-path">مسیر یادگیری</button>
+    <button id="tab-analyzer">تحلیلگر جمله</button>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside id="sidebar"></aside>
+  <main id="main"></main>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const GRAMMAR = [
+  { cat: "زمان‌ها (Tenses)", topics: [
+    { id:"pres-simple", en:"Present Simple", fa:"حال ساده", level:"A1",
+      formula:"S + V(base)/V(-s)  ...  Do/Does + S + V(base)?  ...  S + don't/doesn't + V(base)",
+      explain:"حال ساده برای کارهایی به کار می‌رود که تکرار می‌شوند، عادت هستند، یا همیشه درست‌اند — نه لزوماً کاری که همین الان در حال انجام است. مثلاً «I work in a bank» یعنی شغل من اینه، نه اینکه الان دارم کار می‌کنم. با فاعل سوم‌شخص مفرد (he/she/it) فعل «s» یا «es» می‌گیرد؛ اگر فعل به consonant+y ختم شود، «y» به «ies» تبدیل می‌شود (study→studies).",
+      usage:[
+        "برای عادت‌ها و روتین‌های روزمره: I get up at 7 every day.",
+        "برای حقایق و قوانین همیشگی: The Earth goes around the Sun.",
+        "برای برنامه‌های ثابت (مثل جدول زمانی): The train leaves at 9pm.",
+        "با قیدهای تکرار مثل always, usually, often, sometimes, never, every day.",
+        "برای احساسات و افکار پایدار: I like coffee. She believes in hard work."
+      ],
+      mistake:"اشتباه رایج: استفاده از حال ساده برای کاری که همین الان در حال انجام است. درست نیست: «I read a book now» — باید بگی «I am reading a book now» (حال استمراری).",
+      examples:[["She works in a bank.","او در یک بانک کار می‌کند."],["The sun rises in the east.","خورشید از شرق طلوع می‌کند."],["I don't drink coffee.","من قهوه نمی‌خورم."],["He studies English every evening.","او هر عصر انگلیسی می‌خواند."]],
+      yt:"present simple tense explained" },
+    { id:"pres-cont", en:"Present Continuous", fa:"حال استمراری", level:"A1",
+      formula:"S + am/is/are + V-ing  ...  Am/Is/Are + S + V-ing?  ...  S + am/is/are + not + V-ing",
+      explain:"حال استمراری برای کاری استفاده می‌شود که همین الان، در همین لحظه، در حال اتفاق افتادن است، یا برای یک روند موقتی در دوره‌ی زمانی فعلی (نه لزوماً همین ثانیه). همچنین برای برنامه‌های از قبل تنظیم‌شده در آینده‌ی نزدیک به کار می‌رود. توجه: بعضی از فعل‌ها (مثل know, like, want, believe, need, seem, own) معمولاً در حالت استمراری استفاده نمی‌شوند چون حالت‌های ذهنی یا دائمی را نشان می‌دهند.",
+      usage:[
+        "کاری که همین الان در حال انجام است: She is cooking dinner right now.",
+        "روندی موقتی که این روزها در جریان است: I'm studying English this month.",
+        "برنامه‌ی قطعی در آینده‌ی نزدیک: We are flying to Rome on Friday.",
+        "با قیدهایی مثل now, right now, at the moment, these days, currently.",
+        "برای شکایت از یک عادت آزاردهنده با always: He is always losing his keys!"
+      ],
+      mistake:"اشتباه رایج: به‌کار بردن افعال حالتی (state verbs) مثل know, want, love در حالت استمراری. درست نیست: «I am knowing the answer» — باید بگی «I know the answer».",
+      examples:[["I am reading a book now.","الان دارم کتاب می‌خوانم."],["They are meeting us tomorrow.","آن‌ها فردا با ما ملاقات می‌کنند."],["She isn't listening to me.","او به من گوش نمی‌دهد."]],
+      yt:"present continuous tense explained" },
+    { id:"past-simple", en:"Past Simple", fa:"گذشته ساده", level:"A1",
+      formula:"S + V(past)  ...  Did + S + V(base)?  ...  S + didn't + V(base)",
+      explain:"گذشته ساده برای کاری استفاده می‌شود که در یک زمان مشخص در گذشته شروع و تمام شده و هیچ ارتباطی به حال ندارد. افعال باقاعده «ed» می‌گیرند (با قوانین املایی: play→played، study→studied، stop→stopped) و افعال بی‌قاعده شکل خاص خودشان را دارند که باید حفظ شوند (go→went، see→saw). در جمله‌ی سؤالی و منفی، فعل به شکل ساده (base) برمی‌گردد و «did/didn't» زمان را نشان می‌دهد.",
+      usage:[
+        "کاری که در گذشته تمام شده: I visited Rome in 2019.",
+        "همراه با زمان مشخص گذشته: yesterday, last week, two years ago, in 2020.",
+        "توالی کارهای گذشته در یک داستان: He woke up, had breakfast, and left.",
+        "در جملات منفی و سؤالی، فعل اصلی به شکل ساده برمی‌گردد: Did she call you? / She didn't call.",
+        "عادت‌های گذشته که دیگر ادامه ندارند (می‌توان به‌جایش از used to هم استفاده کرد): I played tennis a lot as a child."
+      ],
+      mistake:"اشتباه رایج: در جمله‌ی منفی و سؤالی هم فعل رو به گذشته می‌برند. درست نیست: «Did she went?» — باید بگی «Did she go?» چون «did» خودش زمان گذشته را نشان می‌دهد.",
+      examples:[["We visited Paris last year.","سال گذشته از پاریس بازدید کردیم."],["She didn't call me.","او به من زنگ نزد."],["Did you see that movie?","آن فیلم را دیدی؟"]],
+      yt:"past simple tense explained" },
+    { id:"past-cont", en:"Past Continuous", fa:"گذشته استمراری", level:"A2",
+      formula:"S + was/were + V-ing  ...  Was/Were + S + V-ing?  ...  S + wasn't/weren't + V-ing",
+      explain:"گذشته استمراری برای کاری استفاده می‌شود که در یک لحظه‌ی مشخص در گذشته در حال انجام بوده است، بدون اینکه بدانیم دقیقاً کِی شروع یا تمام شده. رایج‌ترین کاربردش نشان دادن یک کار طولانی‌تر در پس‌زمینه است که کار دیگری (با گذشته ساده) در وسط آن اتفاق افتاده، معمولاً با «when» یا «while».",
+      usage:[
+        "کار در حال انجام در یک لحظه‌ی مشخص گذشته: At 8pm, I was having dinner.",
+        "وقفه‌ی یک کار کوتاه‌تر در میان کار طولانی‌تر: I was walking home when it started to rain.",
+        "دو کار هم‌زمان در گذشته با while: She was cooking while he was cleaning.",
+        "توصیف صحنه یا پس‌زمینه‌ی یک داستان: The sun was shining and birds were singing.",
+      ],
+      mistake:"اشتباه رایج: قاطی کردن ترتیب گذشته ساده و استمراری. کار طولانی‌تر (پس‌زمینه) گذشته استمراری می‌گیرد و کار کوتاه‌تر که آن را قطع می‌کند، گذشته ساده: «I was watching TV when the phone rang» نه برعکس.",
+      examples:[["I was cooking when he called.","داشتم آشپزی می‌کردم که او زنگ زد."],["They were watching TV at 9pm.","ساعت ۹ شب داشتند تلویزیون تماشا می‌کردند."]],
+      yt:"past continuous tense explained" },
+    { id:"pres-perfect", en:"Present Perfect", fa:"حال کامل", level:"A2",
+      formula:"S + have/has + V(past participle)  ...  Have/Has + S + V(pp)?  ...  S + haven't/hasn't + V(pp)",
+      explain:"حال کامل، گذشته را به حال وصل می‌کند: کاری در گذشته اتفاق افتاده اما زمانش مهم نیست یا نتیجه‌اش هنوز روی حال تأثیر دارد. با «ever/never» برای تجربه‌های زندگی، با «just/already/yet» برای کارهای تازه‌تمام‌شده، و با «for/since» برای کاری که از گذشته تا الان ادامه داشته استفاده می‌شود. برخلاف گذشته ساده، در حال کامل هیچ زمان مشخصی (مثل yesterday, last year) ذکر نمی‌شود.",
+      usage:[
+        "تجربه‌ی زندگی، بدون توجه به زمان دقیق: I have been to Japan twice.",
+        "کاری تازه‌تمام‌شده که نتیجه‌اش الان مهم است: She has just finished her homework.",
+        "کاری که هنوز اتفاق نیفتاده (در جمله‌ی منفی/سؤالی با yet): Have you finished yet? I haven't finished yet.",
+        "کاری که از یک نقطه در گذشته تا الان ادامه دارد: I have lived here since 2015 / for 8 years.",
+        "خبری تازه که روی الان اثر دارد: I have lost my keys! (هنوز پیدا نکردم)"
+      ],
+      mistake:"اشتباه رایج: به‌کار بردن حال کامل با زمان مشخص گذشته. درست نیست: «I have seen him yesterday» — چون «yesterday» زمان مشخص است، باید گذشته ساده به‌کار رود: «I saw him yesterday».",
+      examples:[["I have visited Japan twice.","من دو بار به ژاپن رفته‌ام."],["She has just finished her homework.","او همین الان تکالیفش را تمام کرده است."],["We haven't decided yet.","هنوز تصمیم نگرفته‌ایم."]],
+      yt:"present perfect tense explained" },
+    { id:"past-perfect", en:"Past Perfect", fa:"گذشته کامل", level:"B1",
+      formula:"S + had + V(past participle)  ...  Had + S + V(pp)?  ...  S + hadn't + V(pp)",
+      explain:"گذشته کامل «گذشته‌ی گذشته» است: برای نشان دادن اینکه کاری قبل از کار دیگری در گذشته اتفاق افتاده به کار می‌رود. وقتی دو اتفاق در گذشته داریم و می‌خواهیم ترتیب زمانی آن‌ها را روشن کنیم، اولی (زودتر) گذشته کامل می‌گیرد و دومی گذشته ساده. اغلب همراه با «before, after, by the time, already, never» استفاده می‌شود.",
+      usage:[
+        "کاری که قبل از یک نقطه‌ی مشخص در گذشته کامل شده بود: By 8pm, I had finished my work.",
+        "دو اتفاق پشت‌سرهم در گذشته: After she had eaten, she went for a walk.",
+        "برای بیان تجربه یا عدم‌تجربه تا آن نقطه در گذشته: I had never seen snow before that trip.",
+        "در جملات شرطی نوع سوم: If I had known, I would have called you.",
+      ],
+      mistake:"اشتباه رایج: استفاده از گذشته کامل برای هر دو اتفاق گذشته، حتی وقتی ترتیب مهم نیست. اگر ترتیب زمانی مشخص نباشد یا با کلمات ربطی مثل «and, then» بیان شود، گذشته ساده کافی است: «I woke up and had breakfast» نه «I had woken up and had had breakfast».",
+      examples:[["The train had left before we arrived.","قطار قبل از رسیدن ما حرکت کرده بود."],["She had never seen snow before that day.","او تا آن روز هرگز برف ندیده بود."]],
+      yt:"past perfect tense explained" },
+    { id:"future", en:"Future (will / going to)", fa:"زمان آینده", level:"A2",
+      formula:"S + will + V(base)   /   S + am/is/are + going to + V(base)",
+      explain:"برای صحبت درباره‌ی آینده معمولاً از دو ساختار اصلی استفاده می‌شود: «will» برای تصمیم‌های لحظه‌ای (که همان لحظه‌ی صحبت گرفته می‌شوند)، پیش‌بینی بدون مدرک مشخص، وعده‌ها، و درخواست‌ها؛ و «going to» برای برنامه‌ها و تصمیم‌های از قبل گرفته‌شده، و پیش‌بینی‌هایی که بر اساس مدرک یا نشانه‌ای در همین لحظه انجام می‌شوند (مثلاً ابرهای تیره در آسمان).",
+      usage:[
+        "تصمیم لحظه‌ای هنگام صحبت: I'm thirsty. I will get some water.",
+        "برنامه‌ی از قبل تصمیم‌گرفته‌شده: We are going to visit my parents this weekend.",
+        "پیش‌بینی بر اساس نشانه‌ی موجود: Look at those clouds — it's going to rain.",
+        "پیش‌بینی کلی بدون مدرک خاص: I think it will be sunny tomorrow.",
+        "وعده، تهدید یا پیشنهاد آنی: I will help you carry that. / I'll call you later."
+      ],
+      mistake:"اشتباه رایج: استفاده از «will» برای برنامه‌ای که از قبل تنظیم شده. اگر بلیط خریده‌ای و برنامه‌ریزی کرده‌ای، بهتره بگی «I'm going to fly to Paris next week» نه «I will fly to Paris next week».",
+      examples:[["I will help you with that.","من در این کار کمکت می‌کنم."],["We are going to travel next month.","ماه آینده قصد سفر داریم."],["It's going to rain soon.","به‌زودی باران می‌بارد."]],
+      yt:"future tense will vs going to" },
+  ]},
+  { cat: "شرطی‌ها (Conditionals)", topics: [
+    { id:"cond-zero", en:"Zero Conditional", fa:"شرطی نوع صفر", level:"A2",
+      formula:"If + S + V(present), S + V(present)",
+      explain:"شرطی نوع صفر برای حقایق علمی، قوانین طبیعی و چیزهایی استفاده می‌شود که همیشه و بدون استثنا درست‌اند — یعنی نتیجه‌ی «if» همیشه اتفاق می‌افتد. هر دو قسمت جمله (شرط و نتیجه) فعل حال ساده می‌گیرند. می‌توان به‌جای «if» از «when» هم استفاده کرد بدون تغییر معنا.",
+      usage:[
+        "حقایق علمی: If you heat water to 100°C, it boils.",
+        "قوانین و مقررات ثابت: If you are under 18, you can't vote.",
+        "می‌توان «if» را با «when» جایگزین کرد: When the sun goes down, it gets dark.",
+        "عادات و نتیجه‌ی همیشگی یک عمل: If I drink coffee at night, I can't sleep.",
+      ],
+      mistake:"اشتباه رایج: به‌کار بردن «will» در قسمت نتیجه. در شرطی نوع صفر هر دو فعل حال ساده‌اند: «If you heat ice, it melts» نه «it will melt».",
+      examples:[["If you heat ice, it melts.","اگر یخ را گرم کنی، آب می‌شود."],["Plants die if they don't get water.","گیاهان اگر آب نگیرند، می‌میرند."]],
+      yt:"zero conditional explained" },
+    { id:"cond-first", en:"First Conditional", fa:"شرطی نوع اول", level:"A2",
+      formula:"If + S + V(present), S + will + V(base)",
+      explain:"شرطی نوع اول برای موقعیت‌های واقعی و کاملاً ممکن در آینده استفاده می‌شود — چیزی که به‌طور منطقی ممکن است اتفاق بیفتد. قسمت «if» همیشه فعل حال ساده می‌گیرد (نه will)، و قسمت نتیجه با «will» بیان می‌شود. به‌جای «will» می‌توان از modal‌های دیگر مثل can, might, should هم در قسمت نتیجه استفاده کرد بسته به قطعیت.",
+      usage:[
+        "پیش‌بینی واقعی مشروط به یک شرط: If it rains, we will stay home.",
+        "هشدار یا نتیجه‌ی منطقی: If you don't hurry, you'll miss the bus.",
+        "پیشنهاد یا امکان با modal دیگر به‌جای will: If you're free, we could go out.",
+        "قول یا وعده: If you help me, I will help you too.",
+      ],
+      mistake:"اشتباه رایج: استفاده از «will» هم در قسمت if. درست نیست: «If it will rain, we will stay home» — قسمت if همیشه حال ساده است: «If it rains...».",
+      examples:[["If it rains, we will stay home.","اگر باران بیاید، در خانه می‌مانیم."],["If she studies hard, she will pass the exam.","اگر سخت درس بخواند، در امتحان قبول می‌شود."]],
+      yt:"first conditional explained" },
+    { id:"cond-second", en:"Second Conditional", fa:"شرطی نوع دوم", level:"B1",
+      formula:"If + S + V(past), S + would + V(base)",
+      explain:"شرطی نوع دوم برای موقعیت‌های فرضی، غیرواقعی یا بعید در زمان حال یا آینده استفاده می‌شود — چیزی که واقعیت ندارد یا خیلی بعید است. قسمت «if» فعل گذشته ساده می‌گیرد (اما معنای گذشته ندارد، فقط فرضی‌بودن را نشان می‌دهد) و برای فعل «to be» در تمام فاعل‌ها معمولاً از «were» استفاده می‌شود، حتی با I/he/she/it.",
+      usage:[
+        "موقعیت کاملاً فرضی در حال حاضر: If I had a million dollars, I would buy a house.",
+        "توصیه با ساختار «If I were you»: If I were you, I would apologize.",
+        "چیزی که بعید است اما غیرممکن نیست: If she asked me, I would help her.",
+        "رویا و آرزوی غیرواقعی: If I could fly, I would travel everywhere.",
+      ],
+      mistake:"اشتباه رایج: استفاده از «would» در قسمت if. درست نیست: «If I would have money...» — قسمت if همیشه گذشته ساده است: «If I had money...».",
+      examples:[["If I had more money, I would travel the world.","اگر پول بیشتری داشتم، دنیا را می‌گشتم."],["If I were you, I wouldn't say that.","اگر جای تو بودم، این حرف را نمی‌زدم."]],
+      yt:"second conditional explained" },
+    { id:"cond-third", en:"Third Conditional", fa:"شرطی نوع سوم", level:"B2",
+      formula:"If + S + had + V(pp), S + would have + V(pp)",
+      explain:"شرطی نوع سوم درباره‌ی موقعیت‌های فرضی در گذشته صحبت می‌کند که اتفاق نیفتادند — یعنی واقعیت برعکس آن بوده. معمولاً برای افسوس‌خوردن، سرزنش، یا توضیح اینکه چیزی چطور می‌توانست فرق کند به کار می‌رود. قسمت «if» گذشته کامل (had + pp) می‌گیرد و نتیجه «would have + pp» است.",
+      usage:[
+        "افسوس از فرصتی که از دست رفته: If I had studied, I would have passed the exam.",
+        "توضیح اینکه چطور یک نتیجه‌ی گذشته می‌توانست فرق کند: If she had left earlier, she wouldn't have missed the train.",
+        "سرزنش ملایم: If you had told me, I could have helped.",
+        "با «could have» یا «might have» هم می‌توان به‌جای «would have» در نتیجه استفاده کرد.",
+      ],
+      mistake:"اشتباه رایج: مخلوط کردن نوع دوم و سوم. درست نیست: «If I had known, I would call you» — چون قسمت if گذشته کامل است، نتیجه هم باید «would have called» باشد.",
+      examples:[["If I had studied, I would have passed the exam.","اگر درس خوانده بودم، در امتحان قبول شده بودم."],["She wouldn't have been late if she had left earlier.","اگر زودتر می‌رفت، دیر نمی‌رسید."]],
+      yt:"third conditional explained" },
+  ]},
+  { cat: "مجهول (Passive Voice)", topics: [
+    { id:"passive", en:"Passive Voice", fa:"جمله مجهول", level:"B1",
+      formula:"S(object) + be + V(past participle) + (by agent)",
+      explain:"در جمله‌ی معلوم، فاعل کار را انجام می‌دهد؛ در جمله‌ی مجهول، تمرکز روی خودِ کار یا کسی/چیزی است که کار روی او انجام شده، نه روی انجام‌دهنده. مفعول جمله‌ی معلوم به فاعل جمله‌ی مجهول تبدیل می‌شود. فعل «be» باید همان زمانی باشد که در جمله‌ی معلوم بود (is/was/has been/will be و...) و فعل اصلی همیشه شکل سوم (past participle) می‌گیرد. اگر انجام‌دهنده مهم نباشد یا مشخص نباشد، می‌توان «by...» را کلاً حذف کرد.",
+      usage:[
+        "وقتی انجام‌دهنده مهم نیست یا مشخص نیست: My car was stolen last night.",
+        "در متون رسمی، علمی و خبری که تمرکز روی رویداد است: The bridge was built in 1990.",
+        "وقتی انجام‌دهنده را می‌خواهیم ذکر کنیم: The novel was written by a famous author.",
+        "در تمام زمان‌ها قابل ساخت است: is made (حال) / was made (گذشته) / has been made (حال کامل) / will be made (آینده).",
+      ],
+      mistake:"اشتباه رایج: فراموش کردن فعل «be» یا استفاده از شکل اشتباه فعل. درست نیست: «The cake made by her» — باید بگی «The cake was made by her».",
+      examples:[["The letter was written by Sara.","نامه توسط سارا نوشته شد."],["This bridge was built in 1990.","این پل در سال ۱۹۹۰ ساخته شد."],["English is spoken all over the world.","انگلیسی در سراسر جهان صحبت می‌شود."]],
+      yt:"passive voice grammar explained" },
+  ]},
+  { cat: "افعال کمکی وجهی (Modals)", topics: [
+    { id:"modal-can", en:"Can / Could", fa:"توانایی و درخواست", level:"A1",
+      formula:"S + can/could + V(base)  ...  Can/Could + S + V(base)?",
+      explain:"«can» برای توانایی، اجازه، و درخواست‌های غیررسمی در زمان حال استفاده می‌شود. «could» شکل گذشته‌ی آن برای توانایی در گذشته است، اما همچنین برای درخواست‌های مؤدبانه‌تر و پیشنهادها در زمان حال هم به کار می‌رود. بعد از can/could همیشه فعل به شکل ساده (بدون to) می‌آید.",
+      usage:[
+        "توانایی در زمان حال: I can speak three languages.",
+        "توانایی در گذشته: When I was young, I could run very fast.",
+        "درخواست مؤدبانه (could مؤدبانه‌تر از can است): Could you pass the salt, please?",
+        "اجازه دادن یا خواستن: Can I open the window?",
+        "پیشنهاد: You could try calling her.",
+      ],
+      mistake:"اشتباه رایج: اضافه کردن «to» بعد از can/could. درست نیست: «I can to swim» — باید بگی «I can swim».",
+      examples:[["I can swim very well.","من می‌توانم خیلی خوب شنا کنم."],["Could you help me, please?","می‌شود لطفاً کمکم کنید؟"],["She couldn't come to the party.","او نتوانست به مهمانی بیاید."]],
+      yt:"modal verbs can could explained" },
+    { id:"modal-must", en:"Must / Have to", fa:"الزام و اجبار", level:"A2",
+      formula:"S + must/have to + V(base)  ...  S + mustn't / don't have to + V(base)",
+      explain:"هر دو «must» و «have to» برای بیان اجبار به کار می‌روند، اما فرقشان مهم است: «must» معمولاً نظر شخصی گوینده را نشان می‌دهد (خودم فکر می‌کنم لازم است)، در حالی که «have to» یک قانون یا الزام بیرونی است (مثلاً قانون یا دستور شخص دیگر). نکته‌ی مهم‌تر در حالت منفی است: «mustn't» یعنی «ممنوع است»، اما «don't have to» یعنی «لازم نیست» (اختیاری است) — این دو معنای کاملاً متفاوتی دارند.",
+      usage:[
+        "الزام شخصی/نظر گوینده: I must call my mother tonight (خودم احساس می‌کنم لازم است).",
+        "الزام بیرونی/قانون: I have to wear a uniform at work (قانون شرکت است).",
+        "ممنوعیت: You mustn't smoke here (انجامش ممنوع است).",
+        "عدم اجبار: You don't have to come if you're busy (اختیاریه، مجبور نیستی).",
+      ],
+      mistake:"اشتباه رایج: فکر کردن به «mustn't» و «don't have to» به‌عنوان مترادف. اصلاً یکی نیستند: «mustn't» = ممنوع، «don't have to» = لازم نیست ولی مجازه.",
+      examples:[["You must wear a seatbelt.","باید کمربند ایمنی ببندی."],["I have to finish this report today.","باید امروز این گزارش را تمام کنم."],["You don't have to bring anything.","لازم نیست چیزی بیاوری."]],
+      yt:"must vs have to explained" },
+    { id:"modal-should", en:"Should", fa:"توصیه", level:"A2",
+      formula:"S + should + V(base)  ...  S + shouldn't + V(base)",
+      explain:"«should» برای دادن توصیه، پیشنهاد یا بیان اینکه کاری «درست» یا «عاقلانه» است استفاده می‌شود — برخلاف «must»، اجباری در کار نیست، فقط نظر یا راهنمایی است. همچنین برای بیان انتظار (چیزی که احتمالاً باید این‌طور باشد) هم به کار می‌رود.",
+      usage:[
+        "توصیه‌ی دوستانه: You should get some rest.",
+        "توصیه‌ی منفی: You shouldn't eat so much sugar.",
+        "درخواست نظر: What should I do?",
+        "بیان انتظار منطقی: The package should arrive tomorrow.",
+      ],
+      mistake:"اشتباه رایج: استفاده از should برای الزام قطعی. should فقط توصیه است، نه اجبار؛ برای اجبار باید از must/have to استفاده کرد.",
+      examples:[["You should see a doctor.","باید به دکتر مراجعه کنی."],["You shouldn't stay up so late.","نباید تا این‌قدر دیر بیدار بمانی."]],
+      yt:"modal verb should explained" },
+  ]},
+  { cat: "جملات گزارشی (Reported Speech)", topics: [
+    { id:"reported", en:"Reported Speech", fa:"نقل قول غیرمستقیم", level:"B1",
+      formula:"S + said (that) + S + V(shifted back one tense)",
+      explain:"وقتی حرف کسی را غیرمستقیم (بدون علامت نقل‌قول) نقل می‌کنیم، معمولاً زمان فعل، ضمایر، و قیدهای زمان/مکان تغییر می‌کنند — این کار «backshift» نام دارد: حال ساده→گذشته ساده، حال استمراری→گذشته استمراری، حال کامل→گذشته کامل، will→would، can→could. قیدهایی مثل «today» به «that day»، «tomorrow» به «the next day»، و «here» به «there» تبدیل می‌شوند. کلمه‌ی «that» اختیاری است و می‌توان حذفش کرد.",
+      usage:[
+        "حال ساده به گذشته ساده: \"I am tired\" → She said she was tired.",
+        "will به would: \"I will call you\" → He said he would call me.",
+        "can به could: \"I can help\" → She said she could help.",
+        "برای سؤال‌های گزارشی از ask استفاده می‌شود و ترتیب کلمات به حالت خبری برمی‌گردد: \"Where do you live?\" → He asked where I lived.",
+      ],
+      mistake:"اشتباه رایج: فراموش کردن backshift زمان فعل. درست نیست: «She said she is tired» وقتی داریم گذشته را گزارش می‌کنیم — باید بگی «She said she was tired».",
+      examples:[["\"I am tired,\" she said. → She said (that) she was tired.","او گفت که خسته است."],["\"I will call you,\" he said. → He said he would call me.","او گفت که به من زنگ خواهد زد."]],
+      yt:"reported speech explained" },
+  ]},
+  { cat: "جملات موصولی (Relative Clauses)", topics: [
+    { id:"relative", en:"Relative Clauses", fa:"جملات موصولی", level:"B1",
+      formula:"Noun + who/which/that/whose/where + clause",
+      explain:"جمله‌ی موصولی برای اضافه‌کردن اطلاعات بیشتر درباره‌ی یک اسم، بدون شروع یک جمله‌ی جدید، استفاده می‌شود. انتخاب ضمیر موصولی به نوع اسم بستگی دارد: «who» برای انسان، «which» برای اشیا و حیوانات، «that» برای هر دو (و در جملات محاوره‌ای رایج‌تر است)، «whose» برای نشان دادن مالکیت، و «where» برای مکان. در جملات موصولی «تعریفی» (که اطلاعات ضروری می‌دهند) نباید کاما گذاشت، اما در نوع «غیرتعریفی» (اطلاعات اضافه) باید کاما بین جمله و اسم گذاشت.",
+      usage:[
+        "برای انسان: The man who called you is my brother.",
+        "برای اشیا: This is the book that I told you about.",
+        "برای مالکیت: That's the man whose car was stolen.",
+        "برای مکان: This is the town where I was born.",
+        "جمله‌ی غیرتعریفی با کاما (اطلاعات اضافی، نه ضروری): My brother, who lives in London, is visiting us.",
+      ],
+      mistake:"اشتباه رایج: تکرار ضمیر فاعلی/مفعولی بعد از جمله‌ی موصولی. درست نیست: «The man who he called me» — باید بگی «The man who called me» (بدون «he» اضافه).",
+      examples:[["The man who called you is my brother.","مردی که به تو زنگ زد برادر من است."],["This is the book that I told you about.","این همان کتابی است که درباره‌اش گفتم."]],
+      yt:"relative clauses who which that" },
+  ]},
+  { cat: "حروف تعریف (Articles)", topics: [
+    { id:"articles", en:"A / An / The", fa:"حروف تعریف", level:"A1",
+      formula:"a/an + noun (نامشخص، مفرد)   ...   the + noun (مشخص، مفرد یا جمع)   ...   - (بدون حرف تعریف، برای اسم‌های کلی)",
+      explain:"«a» یا «an» زمانی استفاده می‌شود که درباره‌ی چیزی نامشخص یا برای اولین بار صحبت می‌کنیم (فقط با اسم‌های قابل‌شمارش مفرد)؛ انتخاب بین «a» و «an» بر اساس صدای اول کلمه است (نه حرف نوشتاری) — «an hour» چون صدای مصوت دارد، «a university» چون صدای «یو» می‌دهد. «the» زمانی استفاده می‌شود که چیزی برای هر دو طرف گفتگو مشخص است — یا چون قبلاً ذکر شده، یا چون یکتا است (the sun, the moon)، یا از متن مشخص است. برای صحبت کلی درباره‌ی یک دسته (نه یک نمونه‌ی خاص)، معمولاً هیچ حرف تعریفی نمی‌آید.",
+      usage:[
+        "چیزی که برای اولین بار معرفی می‌شود: I saw a cat in the garden.",
+        "همان چیز وقتی دوباره ذکر می‌شود: The cat was sleeping under a tree.",
+        "چیزهای یکتای دنیا: the sun, the moon, the internet.",
+        "بیان کلی درباره‌ی یک دسته، بدون حرف تعریف: Cats are independent animals. (نه The cats)",
+        "اسم‌های غیرقابل‌شمارش معمولاً بدون a/an: I need information, not an information."
+      ],
+      mistake:"اشتباه رایج: استفاده از «the» برای بیان کلی. درست نیست: «The dogs are loyal animals» وقتی منظورمان همه‌ی سگ‌ها به‌طور کلی است — باید بدون «the» بگی: «Dogs are loyal animals».",
+      examples:[["I saw a cat in the garden.","یک گربه در باغ دیدم."],["The cat was sleeping under a tree.","آن گربه زیر یک درخت خوابیده بود."],["She is an engineer.","او مهندس است."]],
+      yt:"articles a an the explained" },
+  ]},
+  { cat: "حروف اضافه (Prepositions)", topics: [
+    { id:"prep-time", en:"Prepositions of Time", fa:"حروف اضافه‌ی زمان", level:"A1",
+      formula:"at (ساعت دقیق، نقطه‌ی زمانی) / on (روز، تاریخ) / in (ماه، سال، فصل، بخشی از روز)",
+      explain:"سه حرف اضافه‌ی اصلی زمان بر اساس اندازه‌ی بازه‌ی زمانی انتخاب می‌شوند: «at» برای نقطه‌های دقیق زمانی (ساعت، لحظه‌های خاص مثل at night, at midnight)، «on» برای روزها و تاریخ‌های مشخص، و «in» برای بازه‌های زمانی بزرگ‌تر مثل ماه، سال، فصل، یا بخش‌های روز (به‌جز شب). این سه با هم قابل تعویض نیستند و باید حفظ شوند.",
+      usage:[
+        "at + ساعت یا لحظه‌ی دقیق: at 7 o'clock, at noon, at night, at the weekend (بریتیش).",
+        "on + روز یا تاریخ: on Monday, on July 4th, on my birthday.",
+        "in + ماه/سال/فصل: in June, in 2020, in summer.",
+        "in + بخش روز (به‌جز شب): in the morning, in the afternoon — اما «at night».",
+        "بدون حرف اضافه با: today, tomorrow, yesterday, next week, last year."
+      ],
+      mistake:"اشتباه رایج: استفاده از «in» به‌جای «at» برای شب. درست نیست: «in the night» برای زمان معمول خواب — باید بگی «at night».",
+      examples:[["We wake up at 7 o'clock.","ساعت ۷ بیدار می‌شویم."],["My birthday is in June.","تولدم در ماه ژوئن است."],["I will see you on Monday.","دوشنبه می‌بینمت."]],
+      yt:"prepositions of time at on in" },
+    { id:"prep-place", en:"Prepositions of Place", fa:"حروف اضافه‌ی مکان", level:"A1",
+      formula:"at (نقطه‌ی مشخص) / on (روی یک سطح) / in (داخل یک فضای بسته یا محدوده)",
+      explain:"«at» برای اشاره به یک نقطه‌ی مشخص (مثل آدرس، ایستگاه، رویداد) استفاده می‌شود، «on» برای چیزی که روی یک سطح قرار دارد (مثل روی میز، روی دیوار، روی خیابان)، و «in» برای فضایی بسته یا محدوده‌ای بزرگ‌تر (مثل داخل اتاق، داخل شهر، داخل کشور) به کار می‌رود.",
+      usage:[
+        "at + نقطه‌ی مشخص: at the bus stop, at the door, at school.",
+        "on + سطح: on the table, on the wall, on the second floor.",
+        "in + فضای بسته یا محدوده: in the room, in the box, in London, in France.",
+        "برای وسایل نقلیه‌ی بزرگ (که می‌توان داخلش راه رفت) از «on» و برای ماشین/تاکسی از «in» استفاده می‌شود: on the bus / in the car."
+      ],
+      mistake:"اشتباه رایج: قاطی کردن «in» و «at» برای مکان‌های عمومی. مثلاً «at school» یعنی حضور در مدرسه به‌عنوان رویداد/فعالیت، اما «in the school» یعنی از نظر فیزیکی داخل ساختمان مدرسه.",
+      examples:[["The remote control is on the sofa.","کنترل تلویزیون روی مبل است."],["My keys are in my bag.","کلیدهایم داخل کیفم است."],["I'll meet you at the bus stop.","سر ایستگاه اتوبوس می‌بینمت."]],
+      yt:"prepositions of place at on in" },
+  ]},
+  { cat: "مقایسه (Comparatives & Superlatives)", topics: [
+    { id:"comparative", en:"Comparatives & Superlatives", fa:"صفت تفضیلی و عالی", level:"A2",
+      formula:"adj + er / more + adj  (مقایسه‌ی دو چیز)   ...   the + adj + est / the most + adj  (مقایسه‌ی سه چیز یا بیشتر)",
+      explain:"برای مقایسه‌ی دو چیز، از صفت تفضیلی استفاده می‌شود: صفت‌های کوتاه (یک‌هجایی یا دوهجایی که به y ختم می‌شوند) «er» می‌گیرند (fast→faster، happy→happier با تبدیل y به i)، و صفت‌های بلندتر با «more» می‌آیند (interesting→more interesting). برای مقایسه‌ی یک چیز با کل یک گروه (سه یا بیشتر)، از صفت عالی با «the» استفاده می‌شود: صفت‌های کوتاه «est» می‌گیرند و صفت‌های بلند «the most». صفت‌های بی‌قاعده مثل good→better→the best و bad→worse→the worst را باید حفظ کرد. بعد از صفت تفضیلی از «than» استفاده می‌شود.",
+      usage:[
+        "مقایسه‌ی دو چیز با صفت کوتاه: My car is faster than yours.",
+        "مقایسه‌ی دو چیز با صفت بلند: This book is more interesting than that one.",
+        "برترین در یک گروه (سه یا بیشتر): Everest is the highest mountain in the world.",
+        "صفت‌های بی‌قاعده: good→better/the best, bad→worse/the worst, far→farther/the farthest.",
+        "مقایسه‌ی برابری با as...as: She is as tall as her brother."
+      ],
+      mistake:"اشتباه رایج: اضافه‌کردن هم «er» و هم «more». درست نیست: «more faster» — یا از «er» استفاده کن یا از «more»، نه هر دو با هم.",
+      examples:[["This book is more interesting than that one.","این کتاب از آن یکی جالب‌تر است."],["Everest is the highest mountain in the world.","اورست بلندترین کوه دنیاست."],["She is smarter than her brother.","او از برادرش باهوش‌تر است."]],
+      yt:"comparatives and superlatives explained" },
+  ]},
+  { cat: "مصدر و اسم مصدر (Gerunds & Infinitives)", topics: [
+    { id:"gerund-inf", en:"Gerunds & Infinitives", fa:"اسم مصدر و مصدر با to", level:"B1",
+      formula:"V + V-ing (gerund)   /   V + to + V(base) (infinitive)",
+      explain:"وقتی یک فعل بعد از فعل دیگری می‌آید، شکلش (V-ing یا to+فعل) به فعل اول بستگی دارد و باید حفظ شود. بعضی افعال فقط با «V-ing» می‌آیند (enjoy, avoid, finish, mind, suggest, keep, practice)، بعضی فقط با «to + فعل» (want, decide, hope, plan, promise, agree, refuse, learn)، و بعضی افعال (مثل like, love, hate, start, begin, continue) با هر دو می‌آیند تقریباً بدون تغییر معنا. اسم مصدر (gerund) همچنین می‌تواند خودش نقش فاعل جمله را بازی کند و بعد از حروف اضافه هم همیشه به شکل V-ing می‌آید.",
+      usage:[
+        "بعد از افعالی مثل enjoy, avoid, finish, mind: I enjoy reading books.",
+        "بعد از افعالی مثل want, decide, hope, promise: She wants to learn English.",
+        "بعد از حرف اضافه همیشه V-ing: I'm interested in learning French. (نه to learn)",
+        "به‌عنوان فاعل جمله: Swimming is good exercise.",
+        "افعالی که هر دو را قبول می‌کنند: I like swimming. / I like to swim."
+      ],
+      mistake:"اشتباه رایج: استفاده از «to + فعل» بعد از حرف اضافه. درست نیست: «good at to cook» — بعد از حرف اضافه باید V-ing بیاید: «good at cooking».",
+      examples:[["I enjoy reading books.","من از خواندن کتاب لذت می‌برم."],["She wants to learn English.","او می‌خواهد انگلیسی یاد بگیرد."],["He is good at playing football.","او در فوتبال بازی‌کردن مهارت دارد."]],
+      yt:"gerunds and infinitives explained" },
+  ]},
+];
+
+/* quizzes keyed by topic id */
+const QUIZZES = {
+  "pres-simple":[
+    {q:"She ___ to school every day.", opts:["go","goes","going","went"], a:1, exp:"با فاعل سوم‌شخص مفرد (she) باید «goes» بیاید."},
+    {q:"___ you like tea?", opts:["Do","Does","Are","Is"], a:0, exp:"برای «you» در حال ساده از «Do» استفاده می‌شود."},
+    {q:"My father ___ in a hospital.", opts:["work","works","working","worked"], a:1, exp:"فاعل سوم‌شخص مفرد (father) به فعل «s» می‌گیرد."},
+    {q:"Water ___ at 100 degrees Celsius.", opts:["boil","boils","boiling","boiled"], a:1, exp:"حقایق علمی همیشگی با حال ساده بیان می‌شوند."},
+    {q:"They ___ have breakfast at home.", opts:["doesn't","not","don't","isn't"], a:2, exp:"برای منفی کردن فاعل جمع (they) در حال ساده از «don't» استفاده می‌شود."}
+  ],
+  "pres-cont":[
+    {q:"Look! It ___ outside.", opts:["rains","rain","is raining","rained"], a:2, exp:"کاری که همین الان در حال وقوع است، حال استمراری می‌گیرد."},
+    {q:"We ___ dinner right now.", opts:["are having","have","has","had"], a:0, exp:"با فاعل جمع «we» از «are + V-ing» استفاده می‌شود."},
+    {q:"She ___ TV at the moment.", opts:["watch","watches","is watching","watched"], a:2, exp:"عبارت «at the moment» نشانه‌ی حال استمراری است."},
+    {q:"I'm meeting my friends ___ tomorrow evening.", opts:["usually","every day","-", "always"], a:2, exp:"حال استمراری برای برنامه‌ی قطعی آینده نیازی به قید تکرار ندارد."},
+    {q:"They ___ working today; it's a holiday.", opts:["isn't","aren't","doesn't","don't"], a:1, exp:"برای منفی کردن فاعل جمع در حال استمراری از «aren't» استفاده می‌شود."}
+  ],
+  "past-simple":[
+    {q:"They ___ to the party last night.", opts:["go","goes","went","going"], a:2, exp:"شکل گذشته‌ی «go»، «went» است."},
+    {q:"I ___ my keys yesterday.", opts:["lose","loses","lost","losing"], a:2, exp:"گذشته‌ی بی‌قاعده‌ی «lose»، «lost» است."},
+    {q:"She ___ study for the test.", opts:["didn't","doesn't","don't","not"], a:0, exp:"برای منفی کردن گذشته ساده از «didn't + فعل ساده» استفاده می‌شود."},
+    {q:"___ you see that movie last week?", opts:["Do","Did","Does","Were"], a:1, exp:"برای پرسشی کردن گذشته ساده از «Did» استفاده می‌شود."},
+    {q:"We ___ in this city for five years, then we moved.", opts:["lived","live","have lived","were living"], a:0, exp:"کاری که در گذشته تمام‌شده و تکرار نمی‌شود، گذشته ساده می‌گیرد."}
+  ],
+  "past-cont":[
+    {q:"I ___ TV when the phone rang.", opts:["watch","was watching","watched","watching"], a:1, exp:"کار در حال انجام در لحظه‌ای از گذشته، گذشته استمراری می‌گیرد."},
+    {q:"They ___ football at 5pm yesterday.", opts:["played","were playing","play","plays"], a:1, exp:"عبارت زمانی مشخص در گذشته با «was/were + V-ing» می‌آید."},
+    {q:"While she ___ dinner, I set the table.", opts:["cooked","was cooking","cooks","cook"], a:1, exp:"«while» معمولاً با گذشته استمراری برای کار طولانی‌تر همراه است."},
+    {q:"What ___ you doing at midnight?", opts:["was","were","did","are"], a:1, exp:"با فاعل «you» در گذشته استمراری از «were» استفاده می‌شود."},
+    {q:"He wasn't listening because he ___ about something else.", opts:["thought","think","was thinking","thinks"], a:2, exp:"کار پس‌زمینه‌ای در حال انجام، گذشته استمراری می‌گیرد."}
+  ],
+  "pres-perfect":[
+    {q:"She ___ never ___ sushi before.", opts:["has / eaten","have / eaten","has / eat","did / eat"], a:0, exp:"با «she» از «has» و شکل سوم فعل «eaten» استفاده می‌شود."},
+    {q:"We ___ already ___ our homework.", opts:["have / finished","has / finished","had / finish","did / finished"], a:0, exp:"با فاعل جمع «we» از «have + V(pp)» استفاده می‌شود."},
+    {q:"I ___ this book twice.", opts:["read","have read","reads","was reading"], a:1, exp:"«twice» نشان‌دهنده‌ی تجربه‌ای تا الان است، پس حال کامل مناسب است."},
+    {q:"___ you ever been to London?", opts:["Did","Do","Have","Has"], a:2, exp:"برای پرسش درباره‌ی تجربه‌ی زندگی از «Have you ever...?» استفاده می‌شود."},
+    {q:"He has lived here ___ 2015.", opts:["for","since","ago","at"], a:1, exp:"برای نقطه‌ی شروع یک کار ادامه‌دار از «since» استفاده می‌شود."}
+  ],
+  "past-perfect":[
+    {q:"By the time we arrived, the movie ___ already ___.", opts:["has / started","had / started","was / starting","did / start"], a:1, exp:"برای کاری قبل از کار دیگر در گذشته، از «had + V(pp)» استفاده می‌شود."},
+    {q:"She ___ finished her work before I called.", opts:["has","had","was","did"], a:1, exp:"کاری که قبل از یک کار دیگر در گذشته تمام شده، گذشته کامل می‌گیرد."},
+    {q:"I ___ never seen snow before that trip.", opts:["have","had","has","was"], a:1, exp:"اتفاقی که تا قبل از یک نقطه‌ی مشخص در گذشته نیفتاده بود، گذشته کامل می‌گیرد."},
+    {q:"After she ___ the email, she left the office.", opts:["sent","had sent","sends","sending"], a:1, exp:"اقدام اول در ترتیب زمانی گذشته، شکل «had + V(pp)» می‌گیرد."},
+    {q:"They ___ already left when we got there.", opts:["have","had","has","were"], a:1, exp:"عمل قبلی نسبت به عمل دوم در گذشته، گذشته کامل است."}
+  ],
+  "future":[
+    {q:"I think it ___ rain tomorrow.", opts:["is going to","will","am going to","would"], a:1, exp:"برای پیش‌بینی بدون برنامه‌ریزی قبلی، «will» مناسب‌تر است."},
+    {q:"Look at those clouds! It ___ rain.", opts:["will","is going to","would","did"], a:1, exp:"وقتی نشانه‌ای در همین لحظه می‌بینیم، از «going to» استفاده می‌کنیم."},
+    {q:"We ___ visit our grandparents this weekend. It's already planned.", opts:["will","are going to","would","did"], a:1, exp:"برای برنامه‌های از قبل تصمیم‌گرفته‌شده از «going to» استفاده می‌شود."},
+    {q:"I promise I ___ call you tonight.", opts:["am going to","will","would","was"], a:1, exp:"برای وعده و تصمیم لحظه‌ای از «will» استفاده می‌شود."},
+    {q:"She ___ 30 next month.", opts:["is going to be","will being","is being","was"], a:0, exp:"برای چیزی از پیش مشخص و قطعی مثل تاریخ تولد، «going to» طبیعی‌تر است."}
+  ],
+  "cond-zero":[
+    {q:"If you don't water plants, they ___.", opts:["die","died","will die","would die"], a:0, exp:"شرطی نوع صفر برای حقایق همیشگی، هر دو فعل حال ساده می‌گیرند."},
+    {q:"If you heat water to 100°C, it ___.", opts:["boils","will boil","boiled","would boil"], a:0, exp:"حقیقت علمی همیشگی، شرطی نوع صفر می‌گیرد."},
+    {q:"Ice ___ if you leave it in the sun.", opts:["will melt","melts","melted","would melt"], a:1, exp:"در شرطی نوع صفر، جمله‌ی نتیجه هم حال ساده است."},
+    {q:"If I ___ tired, I go to bed early.", opts:["am","was","will be","would be"], a:0, exp:"در شرطی نوع صفر هر دو قسمت جمله حال ساده هستند."},
+    {q:"Plants grow well if they ___ enough sunlight.", opts:["get","will get","got","would get"], a:0, exp:"شرطی نوع صفر برای یک قانون کلی و همیشگی است."}
+  ],
+  "cond-first":[
+    {q:"If she studies hard, she ___ the exam.", opts:["passes","will pass","would pass","passed"], a:1, exp:"در شرطی نوع اول، جمله‌ی نتیجه با «will» می‌آید."},
+    {q:"If it rains tomorrow, we ___ the picnic.", opts:["cancel","will cancel","would cancel","cancelled"], a:1, exp:"موقعیت واقعی و ممکن در آینده، شرطی نوع اول است."},
+    {q:"I will call you if I ___ time.", opts:["have","will have","had","would have"], a:0, exp:"در قسمت «if» شرطی نوع اول، فعل حال ساده می‌آید."},
+    {q:"If you don't hurry, you ___ the bus.", opts:["miss","will miss","missed","would miss"], a:1, exp:"نتیجه‌ی محتمل در آینده با «will» بیان می‌شود."},
+    {q:"If he ___ late again, the boss will be angry.", opts:["is","will be","was","were"], a:0, exp:"بخش «if» در شرطی نوع اول همیشه حال ساده است."}
+  ],
+  "cond-second":[
+    {q:"If I ___ a bird, I would fly.", opts:["am","was","were","will be"], a:2, exp:"در شرطی نوع دوم، معمولاً با تمام فاعل‌ها از «were» استفاده می‌شود."},
+    {q:"If I had more time, I ___ learn painting.", opts:["will","would","have","had"], a:1, exp:"جمله‌ی نتیجه در شرطی نوع دوم با «would + فعل ساده» می‌آید."},
+    {q:"She would travel more if she ___ more money.", opts:["has","had","will have","would have"], a:1, exp:"بخش «if» در شرطی نوع دوم با گذشته ساده می‌آید."},
+    {q:"If you won the lottery, what ___ you do?", opts:["will","would","did","do"], a:1, exp:"سؤال در شرطی نوع دوم هم با «would» ساخته می‌شود."},
+    {q:"If I ___ him, I would apologize.", opts:["am","was","were","will be"], a:2, exp:"موقعیت فرضی و غیرواقعی با «If I were...» بیان می‌شود."}
+  ],
+  "cond-third":[
+    {q:"If he had left earlier, he ___ the train.", opts:["would catch","would have caught","caught","catches"], a:1, exp:"در شرطی نوع سوم، جمله‌ی نتیجه «would have + V(pp)» می‌گیرد."},
+    {q:"If I had known about the party, I ___ come.", opts:["would come","would have come","came","come"], a:1, exp:"موقعیت فرضی در گذشته با «would have + V(pp)» بیان می‌شود."},
+    {q:"She wouldn't have been late if she ___ earlier.", opts:["left","had left","leaves","would leave"], a:1, exp:"بخش «if» در شرطی نوع سوم با «had + V(pp)» می‌آید."},
+    {q:"If they had studied more, they ___ the exam.", opts:["would pass","would have passed","passed","pass"], a:1, exp:"نتیجه‌ی فرضی گذشته با «would have + V(pp)» ساخته می‌شود."},
+    {q:"If it hadn't rained, we ___ a picnic.", opts:["would have had","would have","had","would had"], a:0, exp:"ساختار کامل «would have had» برای افسوس درباره‌ی گذشته به کار می‌رود."}
+  ],
+  "passive":[
+    {q:"The cake ___ by my mother.", opts:["made","was made","is making","makes"], a:1, exp:"فاعل جمله‌ی مجهول با «be + V(pp)» می‌آید."},
+    {q:"This song ___ by a famous singer.", opts:["sings","sang","was sung","is sing"], a:2, exp:"وقتی تمرکز روی «آهنگ» است نه «خواننده»، جمله مجهول می‌شود."},
+    {q:"The windows ___ every week.", opts:["clean","are cleaned","cleaned","cleans"], a:1, exp:"برای مجهول در حال ساده از «am/is/are + V(pp)» استفاده می‌شود."},
+    {q:"The email ___ yet.", opts:["hasn't sent","hasn't been sent","didn't send","wasn't send"], a:1, exp:"مجهول در حال کامل با «has/have been + V(pp)» ساخته می‌شود."},
+    {q:"This bridge ___ in 1990.", opts:["built","was built","builds","is built"], a:1, exp:"مجهول در گذشته ساده با «was/were + V(pp)» می‌آید."}
+  ],
+  "modal-can":[
+    {q:"___ you pass me the salt, please?", opts:["Can","Must","Should","Have to"], a:0, exp:"برای درخواست مؤدبانه، «Can/Could» مناسب است."},
+    {q:"When I was young, I ___ run very fast.", opts:["can","could","must","should"], a:1, exp:"«could» برای توانایی در گذشته استفاده می‌شود."},
+    {q:"She ___ speak three languages.", opts:["can","must","should","has to"], a:0, exp:"«can» برای توانایی در زمان حال به کار می‌رود."},
+    {q:"___ I use your phone for a minute?", opts:["Must","Could","Should","Have to"], a:1, exp:"«Could I...?» شکل مؤدبانه‌ی درخواست اجازه است."},
+    {q:"He ___ not swim when he was a child.", opts:["can","could","must","should"], a:1, exp:"شکل منفی توانایی در گذشته، «could not / couldn't» است."}
+  ],
+  "modal-must":[
+    {q:"You ___ smoke in the hospital. It's forbidden.", opts:["must not","don't have to","should","can"], a:0, exp:"«must not» یعنی انجام کار ممنوع است."},
+    {q:"I ___ finish this report by Friday; it's a company rule.", opts:["have to","must not","should","can"], a:0, exp:"«have to» برای قوانین و الزامات بیرونی به کار می‌رود."},
+    {q:"You ___ wear a uniform at this school.", opts:["must","mustn't","don't have to","should"], a:0, exp:"«must» می‌تواند برای بیان یک قانون یا الزام قوی به کار رود."},
+    {q:"She doesn't ___ work on Sundays.", opts:["must","have to","should","can"], a:1, exp:"«don't have to» یعنی انجام کاری اجباری نیست، نه ممنوع."},
+    {q:"We ___ hurry, or we will miss the flight.", opts:["must","mustn't","should","can"], a:0, exp:"«must» برای تأکید شخصی گوینده بر ضرورت انجام کار به کار می‌رود."}
+  ],
+  "modal-should":[
+    {q:"You look tired. You ___ get some rest.", opts:["must","should","can","have to"], a:1, exp:"«should» برای توصیه به کار می‌رود."},
+    {q:"You ___ eat more vegetables; it's good for you.", opts:["should","must","can","could"], a:0, exp:"توصیه‌ی ملایم و دوستانه با «should» بیان می‌شود."},
+    {q:"He ___ not stay up so late every night.", opts:["should","shouldn't","must","can't"], a:1, exp:"توصیه‌ی منفی با «shouldn't» ساخته می‌شود."},
+    {q:"___ I apologize to her?", opts:["Must","Should","Have to","Can"], a:1, exp:"برای درخواست نظر و توصیه از «Should I...?» استفاده می‌شود."},
+    {q:"You ___ see a dentist about that toothache.", opts:["should","must not","can't","don't have to"], a:0, exp:"«should» برای پیشنهاد یک اقدام مناسب به کار می‌رود."}
+  ],
+  "reported":[
+    {q:"\"I am busy,\" she said. → She said she ___ busy.", opts:["is","was","has been","be"], a:1, exp:"در نقل قول غیرمستقیم، «am» به «was» تبدیل می‌شود."},
+    {q:"\"I will call you,\" he said. → He said he ___ call me.", opts:["will","would","can","should"], a:1, exp:"در نقل قول غیرمستقیم، «will» به «would» تبدیل می‌شود."},
+    {q:"\"I have finished,\" she said. → She said she ___ finished.", opts:["has","have","had","was"], a:2, exp:"در نقل قول غیرمستقیم، «have» به «had» تبدیل می‌شود."},
+    {q:"\"I can swim,\" he said. → He said he ___ swim.", opts:["can","could","will","must"], a:1, exp:"در نقل قول غیرمستقیم، «can» به «could» تبدیل می‌شود."},
+    {q:"\"I am studying,\" she said. → She said she ___ studying.", opts:["is","was","has been","be"], a:1, exp:"«am» در نقل قول غیرمستقیم به «was» تبدیل می‌شود."}
+  ],
+  "relative":[
+    {q:"The woman ___ lives next door is a doctor.", opts:["which","who","whose","where"], a:1, exp:"برای اشاره به انسان از «who» استفاده می‌شود."},
+    {q:"This is the book ___ I told you about.", opts:["who","which","whose","where"], a:1, exp:"برای اشیا از «which» یا «that» استفاده می‌شود."},
+    {q:"That's the man ___ car was stolen.", opts:["who","which","whose","that"], a:2, exp:"برای بیان مالکیت از «whose» استفاده می‌شود."},
+    {q:"This is the town ___ I was born.", opts:["which","who","where","whose"], a:2, exp:"برای اشاره به مکان از «where» استفاده می‌شود."},
+    {q:"The movie ___ we watched last night was great.", opts:["who","that","whose","where"], a:1, exp:"«that» می‌تواند هم برای انسان و هم برای اشیا به کار برود."}
+  ],
+  "articles":[
+    {q:"I need ___ umbrella; it's raining.", opts:["a","an","the","-"], a:1, exp:"چون «umbrella» با صدای مصوت شروع می‌شود، «an» می‌گیرد."},
+    {q:"___ sun rises in the east.", opts:["A","An","The","-"], a:2, exp:"برای چیزهای یکتا در دنیا مثل «the sun» از «the» استفاده می‌شود."},
+    {q:"She is ___ engineer.", opts:["a","an","the","-"], a:1, exp:"چون «engineer» با صدای مصوت شروع می‌شود، «an» می‌گیرد."},
+    {q:"I saw ___ dog in the park. ___ dog was very friendly.", opts:["a / The","the / A","a / A","the / The"], a:0, exp:"بار اول که چیزی نامشخص است «a» و بار دوم که مشخص شده «the» می‌گیرد."},
+    {q:"We don't need ___ article before plural general nouns, like: ___ cats are cute.", opts:["an / A","the / The","- / -","a / A"], a:2, exp:"برای بیان کلی درباره‌ی یک دسته (مثل گربه‌ها به‌طور کلی)، حرف تعریف نمی‌آید."}
+  ],
+  "prep-time":[
+    {q:"The meeting is ___ Friday morning.", opts:["at","on","in","by"], a:1, exp:"برای روزهای هفته از «on» استفاده می‌شود."},
+    {q:"We usually have dinner ___ 8 o'clock.", opts:["at","on","in","by"], a:0, exp:"برای ساعت مشخص از «at» استفاده می‌شود."},
+    {q:"She was born ___ 1998.", opts:["at","on","in","by"], a:2, exp:"برای سال‌ها از «in» استفاده می‌شود."},
+    {q:"I'll see you ___ the morning.", opts:["at","on","in","by"], a:2, exp:"برای بخش‌های روز (به‌جز شب) از «in» استفاده می‌شود؛ استثنا: at night."},
+    {q:"The shop closes ___ midnight.", opts:["at","on","in","by"], a:0, exp:"برای لحظه‌ی دقیق زمانی مثل «midnight» از «at» استفاده می‌شود."}
+  ],
+  "prep-place":[
+    {q:"The remote control is ___ the sofa.", opts:["at","in","on","to"], a:2, exp:"برای چیزی که روی یک سطح قرار دارد از «on» استفاده می‌شود."},
+    {q:"My keys are ___ my bag.", opts:["at","in","on","to"], a:1, exp:"برای چیزی داخل یک فضای بسته از «in» استفاده می‌شود."},
+    {q:"I'll meet you ___ the bus stop.", opts:["at","in","on","to"], a:0, exp:"برای یک نقطه‌ی مشخص از «at» استفاده می‌شود."},
+    {q:"There is a picture ___ the wall.", opts:["at","in","on","to"], a:2, exp:"برای سطحی مثل دیوار از «on» استفاده می‌شود."},
+    {q:"She lives ___ Canada.", opts:["at","in","on","to"], a:1, exp:"برای کشورها و شهرها معمولاً از «in» استفاده می‌شود."}
+  ],
+  "comparative":[
+    {q:"This is ___ movie I have ever seen.", opts:["the most boring","more boring","boringer","the boringest"], a:0, exp:"برای صفت‌های بلند، صفت عالی با «the most + adj» ساخته می‌شود."},
+    {q:"My car is ___ than yours.", opts:["fast","faster","fastest","more fast"], a:1, exp:"برای صفت‌های کوتاه، صفت تفضیلی با «adj + er» ساخته می‌شود."},
+    {q:"She is ___ student in the class.", opts:["the smartest","smarter","more smart","smart"], a:0, exp:"برای مقایسه‌ی یک نفر با کل گروه از صفت عالی استفاده می‌شود."},
+    {q:"This test is ___ than the last one.", opts:["difficulter","more difficult","most difficult","difficult"], a:1, exp:"برای صفت‌های بلند از «more + adj» استفاده می‌شود."},
+    {q:"Today is ___ day of the year so far.", opts:["hot","hotter","the hottest","more hot"], a:2, exp:"برای بیان اوج یک ویژگی در بین همه، صفت عالی به کار می‌رود."}
+  ],
+  "gerund-inf":[
+    {q:"She decided ___ a new language.", opts:["learning","learn","to learn","learned"], a:2, exp:"فعل «decide» با «to + فعل» می‌آید."},
+    {q:"I enjoy ___ books in my free time.", opts:["read","to read","reading","reads"], a:2, exp:"فعل «enjoy» همیشه با «V-ing» می‌آید."},
+    {q:"They want ___ home early today.", opts:["going","go","to go","went"], a:2, exp:"فعل «want» با «to + فعل» می‌آید."},
+    {q:"He finished ___ his homework before dinner.", opts:["to do","doing","do","did"], a:1, exp:"فعل «finish» با «V-ing» می‌آید."},
+    {q:"We hope ___ you again soon.", opts:["seeing","see","to see","saw"], a:2, exp:"فعل «hope» با «to + فعل» می‌آید."}
+  ],
+};
+
+/* ============ LEARNING PATH ============ */
+const LEARNING_PATH = [
+  { level:"A1", label:"پایه (A1) — شروع کار", ids:["pres-simple","articles","prep-place","prep-time","modal-can"] },
+  { level:"A2", label:"مقدماتی (A2) — گسترش زمان‌ها", ids:["pres-cont","past-simple","past-cont","comparative","modal-must","modal-should","future","pres-perfect","cond-zero","cond-first"] },
+  { level:"B1", label:"متوسط (B1) — ساختارهای پیچیده‌تر", ids:["past-perfect","passive","reported","relative","gerund-inf","cond-second"] },
+  { level:"B2", label:"پیشرفته (B2) — تسلط کامل", ids:["cond-third"] },
+];
+
+/* ============ STATE ============ */
+let currentTopicId = null;
+let currentTab = "topics";
+let sidebarQuery = "";
+const completedTopics = new Set();
+
+/* ============ HELPERS ============ */
+function findTopic(id){
+  for(const cat of GRAMMAR){
+    const t = cat.topics.find(t=>t.id===id);
+    if(t) return t;
+  }
+  return null;
+}
+function ytLink(query){
+  return "https://www.youtube.com/results?search_query=" + encodeURIComponent(query);
+}
+function totalTopicCount(){
+  return GRAMMAR.reduce((sum,cat)=>sum+cat.topics.length, 0);
+}
+function toggleTopicDone(id){
+  if(completedTopics.has(id)) completedTopics.delete(id);
+  else completedTopics.add(id);
+  syncSidebarDoneMarks();
+}
+function syncSidebarDoneMarks(){
+  document.querySelectorAll(".topic-btn").forEach(btn=>{
+    btn.classList.toggle("done", completedTopics.has(btn.dataset.id));
+  });
+}
+
+/* ============ SIDEBAR ============ */
+function renderSidebar(){
+  const el = document.getElementById("sidebar");
+  el.innerHTML = `<input type="text" class="sidebar-search" id="sidebar-search" placeholder="جستجوی گرامر... (مثلاً passive یا مجهول)">`;
+  GRAMMAR.forEach((cat, ci)=>{
+    const wrap = document.createElement("div");
+    wrap.className = "cat" + (ci===0 ? " open":"");
+    wrap.innerHTML = `
+      <div class="cat-head">
+        <span>${cat.cat}</span>
+        <span class="arrow">▸</span>
+      </div>
+      <div class="cat-list">
+        ${cat.topics.map(t=>`
+          <button class="topic-btn${completedTopics.has(t.id)?' done':''}" data-id="${t.id}" data-search="${(t.en+' '+t.fa).toLowerCase()}">
+            <span class="done-mark">✓</span>
+            <span class="en">${t.en}</span>${t.fa}
+          </button>`).join("")}
+      </div>
+    `;
+    wrap.querySelector(".cat-head").addEventListener("click", ()=>{
+      wrap.classList.toggle("open");
+    });
+    el.appendChild(wrap);
+  });
+  el.querySelectorAll(".topic-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      currentTopicId = btn.dataset.id;
+      setTab("topics");
+      renderAll();
+    });
+  });
+  document.getElementById("sidebar-search").addEventListener("input", (e)=>{
+    filterSidebar(e.target.value.trim().toLowerCase());
+  });
+}
+function filterSidebar(query){
+  const cats = document.querySelectorAll("#sidebar .cat");
+  cats.forEach(catEl=>{
+    const btns = catEl.querySelectorAll(".topic-btn");
+    let anyVisible = false;
+    btns.forEach(btn=>{
+      const match = !query || btn.dataset.search.includes(query);
+      btn.classList.toggle("hidden-by-search", !match);
+      if(match) anyVisible = true;
+    });
+    catEl.classList.toggle("hidden-by-search", !anyVisible);
+    if(query && anyVisible) catEl.classList.add("open");
+  });
+}
+
+/* ============ TOPIC VIEW ============ */
+function renderTopic(){
+  const main = document.getElementById("main");
+  if(!currentTopicId){
+    main.innerHTML = `
+      <div class="welcome">
+        <h2>به دفترچه گرامر خوش اومدی</h2>
+        <p>از منوی سمت راست یک موضوع گرامری رو انتخاب کن تا توضیح، مثال، لینک ویدیوی آموزشی، تمرین نوشتن جمله و یک کوییز کوتاه رو ببینی. از تب «مسیر یادگیری» می‌تونی گرامرها رو به ترتیب آموزشی درست (از پایه تا پیشرفته) طی کنی و پیشرفتت رو ببینی، و از تب «تحلیلگر جمله» برای بررسی گرامر هر جمله‌ای که خودت می‌نویسی استفاده کن.</p>
+      </div>`;
+    return;
+  }
+  const t = findTopic(currentTopicId);
+  const quiz = QUIZZES[t.id] || [];
+  const isDone = completedTopics.has(t.id);
+  const pathIds = LEARNING_PATH.flatMap(l=>l.ids);
+  const pIdx = pathIds.indexOf(t.id);
+  const prevId = pIdx > 0 ? pathIds[pIdx-1] : null;
+  const nextId = pIdx !== -1 && pIdx < pathIds.length-1 ? pathIds[pIdx+1] : null;
+  const prevTopic = prevId ? findTopic(prevId) : null;
+  const nextTopic = nextId ? findTopic(nextId) : null;
+
+  main.innerHTML = `
+    <button class="mobile-back" id="mobile-back-btn">→ بازگشت به لیست گرامرها</button>
+
+    <div class="topic-header">
+      <span class="level">CEFR ${t.level}</span>
+      <h2 class="en">${t.en}</h2>
+      <div class="fa-title">${t.fa}</div>
+      <div style="margin-top:14px;">
+        <button class="mark-learned-btn${isDone?' is-done':''}" id="mark-learned-btn">
+          ${isDone ? "✓ یادگرفته شده (برای لغو کلیک کن)" : "این گرامر رو یاد گرفتم"}
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ساختار</h3>
+      <div class="formula">${t.formula}</div>
+      <p class="explain">${t.explain}</p>
+    </div>
+
+    <div class="card">
+      <h3>چه زمانی استفاده می‌شود</h3>
+      <ul class="usage-list">
+        ${(t.usage||[]).map(u=>`<li>${u}</li>`).join("")}
+      </ul>
+    </div>
+
+    <div class="card mistake-card">
+      <h3>⚠ اشتباه رایج</h3>
+      <p class="explain">${t.mistake||""}</p>
+    </div>
+
+    <div class="card">
+      <h3>مثال‌ها</h3>
+      <ul class="examples">
+        ${t.examples.map(([en,fa])=>`<li><div class="en-ex">${en}</div><div class="fa-ex">${fa}</div></li>`).join("")}
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>ویدیوی آموزشی</h3>
+      <a class="video-link" target="_blank" rel="noopener" href="${ytLink(t.yt)}">
+        ▶ جستجوی ویدیوی یوتیوب درباره‌ی «${t.en}»
+      </a>
+    </div>
+
+    <div class="card">
+      <h3>جمله‌ی خودت رو بنویس و بسنج</h3>
+      <p class="explain" style="margin-bottom:14px; font-size:13.5px; color:var(--text-muted);">یه جمله با همین گرامر بنویس؛ یه موتور قاعده‌محور (بدون هوش مصنوعی) چک می‌کنه که آیا این ساختار توش به‌کار رفته یا نه.</p>
+      <textarea id="own-sentence" rows="2" placeholder="Write a sentence using this grammar..."></textarea>
+      <div class="row-btn"><button class="primary" id="check-own">بررسی کن</button></div>
+      <div class="result-box" id="own-result"></div>
+    </div>
+
+    <div class="card">
+      <h3>کوییز کوتاه</h3>
+      <div id="quiz-area"></div>
+    </div>
+
+    ${(prevTopic || nextTopic) ? `
+    <div class="card" style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+      ${prevTopic ? `<button class="video-link" id="path-prev-btn" style="border-color:var(--border);">← قبلی: ${prevTopic.fa}</button>` : `<span></span>`}
+      ${nextTopic ? `<button class="video-link" id="path-next-btn" style="border-color:var(--accent); color:var(--accent);">بعدی در مسیر یادگیری: ${nextTopic.fa} →</button>` : `<span></span>`}
+    </div>` : ``}
+  `;
+
+  document.getElementById("mark-learned-btn").addEventListener("click", ()=>{
+    toggleTopicDone(t.id);
+    renderTopic();
+  });
+  if(prevTopic){
+    document.getElementById("path-prev-btn").addEventListener("click", ()=>{
+      currentTopicId = prevTopic.id; renderAll();
+    });
+  }
+  if(nextTopic){
+    document.getElementById("path-next-btn").addEventListener("click", ()=>{
+      currentTopicId = nextTopic.id; renderAll();
+    });
+  }
+
+  document.getElementById("mobile-back-btn").addEventListener("click", ()=>{
+    currentTopicId = null;
+    renderAll();
+  });
+
+  document.getElementById("check-own").addEventListener("click", ()=>{
+    const val = document.getElementById("own-sentence").value.trim();
+    const box = document.getElementById("own-result");
+    if(!val){
+      box.className = "result-box show bad";
+      box.textContent = "اول یه جمله بنویس.";
+      return;
+    }
+    const results = analyzeLocally(val);
+    const matchKeys = TOPIC_MATCH[t.id] || [];
+    const hit = results.find(r => matchKeys.some(k => r.label.includes(k)));
+
+    if(hit){
+      box.className = "result-box show ok";
+      box.textContent = `درسته! این جمله «${t.en}» رو به‌کار برده (تشخیص داده‌شده: ${hit.label} → «${hit.quote}»).`;
+    } else if(results.length > 0){
+      box.className = "result-box show bad";
+      box.textContent = `به نظر می‌رسه این جمله «${t.en}» رو نشون نمی‌ده. ساختارهایی که توش پیدا کردم: ${results.map(r=>r.label).join("، ")}. دوباره با فرمول «${t.formula}» امتحان کن.`;
+    } else {
+      box.className = "result-box show bad";
+      box.textContent = `نتونستم ساختار «${t.en}» رو توی این جمله تشخیص بدم. سعی کن دقیقاً از فرمول «${t.formula}» استفاده کنی.`;
+    }
+  });
+
+  const quizArea = document.getElementById("quiz-area");
+  if(quiz.length === 0){
+    quizArea.innerHTML = `<p class="explain">فعلاً کوییزی برای این بخش نداریم.</p>`;
+  } else {
+    quizArea.innerHTML = quiz.map((q, qi)=>`
+      <div class="quiz-q">
+        <p class="q-text en">${qi+1}. ${q.q}</p>
+        <div class="opts" data-qi="${qi}">
+          ${q.opts.map((o,oi)=>`<button class="quiz-opt en" data-oi="${oi}">${o}</button>`).join("")}
+        </div>
+        <div class="quiz-exp" id="quiz-exp-${qi}">${q.exp}</div>
+      </div>
+    `).join("");
+
+    quiz.forEach((q, qi)=>{
+      const group = quizArea.querySelector(`.opts[data-qi="${qi}"]`);
+      group.querySelectorAll(".quiz-opt").forEach(optBtn=>{
+        optBtn.addEventListener("click", ()=>{
+          const chosen = Number(optBtn.dataset.oi);
+          group.querySelectorAll(".quiz-opt").forEach((b,i)=>{
+            b.disabled = true;
+            if(i === q.a) b.classList.add("correct");
+            else if(i === chosen) b.classList.add("wrong");
+          });
+          document.getElementById(`quiz-exp-${qi}`).classList.add("show");
+        });
+      });
+    });
+  }
+}
+
+/* ============ LOCAL RULE-BASED GRAMMAR ANALYZER (no AI) ============ */
+const IRREGULAR = {
+  "be":["was","been"],"begin":["began","begun"],"break":["broke","broken"],"bring":["brought","brought"],
+  "build":["built","built"],"buy":["bought","bought"],"catch":["caught","caught"],"choose":["chose","chosen"],
+  "come":["came","come"],"cut":["cut","cut"],"do":["did","done"],"draw":["drew","drawn"],"drink":["drank","drunk"],
+  "drive":["drove","driven"],"eat":["ate","eaten"],"fall":["fell","fallen"],"feel":["felt","felt"],
+  "find":["found","found"],"fly":["flew","flown"],"forget":["forgot","forgotten"],"get":["got","gotten"],
+  "give":["gave","given"],"go":["went","gone"],"grow":["grew","grown"],"have":["had","had"],"hear":["heard","heard"],
+  "hide":["hid","hidden"],"hold":["held","held"],"keep":["kept","kept"],"know":["knew","known"],"leave":["left","left"],
+  "lose":["lost","lost"],"make":["made","made"],"mean":["meant","meant"],"meet":["met","met"],"pay":["paid","paid"],
+  "put":["put","put"],"read":["read","read"],"ride":["rode","ridden"],"ring":["rang","rung"],"rise":["rose","risen"],
+  "run":["ran","run"],"say":["said","said"],"see":["saw","seen"],"sell":["sold","sold"],"send":["sent","sent"],
+  "sing":["sang","sung"],"sit":["sat","sat"],"sleep":["slept","slept"],"speak":["spoke","spoken"],"spend":["spent","spent"],
+  "stand":["stood","stood"],"steal":["stole","stolen"],"swim":["swam","swum"],"take":["took","taken"],"teach":["taught","taught"],
+  "tell":["told","told"],"think":["thought","thought"],"throw":["threw","thrown"],"understand":["understood","understood"],
+  "wake":["woke","woken"],"wear":["wore","worn"],"win":["won","won"],"write":["wrote","written"],"become":["became","become"]
+};
+const IRREGULAR_PAST = new Set(Object.values(IRREGULAR).map(v=>v[0]));
+const IRREGULAR_PP = new Set(Object.values(IRREGULAR).map(v=>v[1]));
+const BE = new Set(["am","is","are","was","were","be","been","being"]);
+const HAVE = new Set(["have","has","had"]);
+const MODALS = new Set(["can","could","must","should","might","may","shall","ought","would"]);
+const TIME_WORDS = new Set(["morning","afternoon","evening","night","monday","tuesday","wednesday","thursday","friday","saturday","sunday",
+  "mondays","tuesdays","wednesdays","thursdays","fridays","saturdays","sundays","weekend","weekends","weekday","weekdays",
+  "mornings","afternoons","evenings","nights",
+  "january","february","march","april","may","june","july","august","september","october","november","december","o'clock","noon","midnight"]);
+const COMPARATIVES = new Set(["better","worse","bigger","smaller","faster","slower","taller","shorter","higher","lower","older","younger","longer","cheaper","nicer","stronger","weaker","richer","poorer","closer","larger"]);
+const SUPERLATIVES = new Set(["best","worst","biggest","smallest","fastest","slowest","tallest","shortest","highest","lowest","oldest","youngest","longest","cheapest","nicest","strongest","weakest","richest","poorest","closest","largest"]);
+const GERUND_TRIGGERS = new Set(["enjoy","like","love","hate","avoid","finish","suggest","mind","keep","practice","consider","miss","quit","deny","imagine","stop","start","continue"]);
+
+const TOPIC_MATCH = {
+  "pres-simple": ["حال ساده"],
+  "pres-cont": ["حال استمراری"],
+  "past-simple": ["گذشته ساده"],
+  "past-cont": ["گذشته استمراری"],
+  "pres-perfect": ["حال کامل"],
+  "past-perfect": ["گذشته کامل"],
+  "future": ["زمان آینده"],
+  "cond-zero": ["شرطی نوع صفر"],
+  "cond-first": ["شرطی نوع اول"],
+  "cond-second": ["شرطی نوع دوم"],
+  "cond-third": ["شرطی نوع سوم"],
+  "passive": ["جمله مجهول"],
+  "modal-can": ["Modal: can","Modal: could"],
+  "modal-must": ["Modal: must","have to"],
+  "modal-should": ["Modal: should"],
+  "reported": ["نقل قول غیرمستقیم"],
+  "relative": ["جمله موصولی"],
+  "articles": ["حروف تعریف"],
+  "prep-time": ["حرف اضافه‌ی زمان"],
+  "prep-place": ["حرف اضافه‌ی مکان"],
+  "comparative": ["صفت تفضیلی","صفت عالی"],
+  "gerund-inf": ["اسم مصدر","مصدر با to"],
+};
+
+function isPastForm(w){ return (w.endsWith("ed") && !EXCLUDE_ED_WORDS.has(w)) || IRREGULAR_PAST.has(w); }
+function isPPForm(w){ return (w.endsWith("ed") && !EXCLUDE_ED_WORDS.has(w)) || IRREGULAR_PP.has(w); }
+
+/* words that end in the letters "ed" but are NOT a past-tense/past-participle main verb in
+   normal usage — -ed feeling-adjectives (tired, bored...) and base-form verbs that merely
+   happen to end in "ed" (need, speed...). Skipping these avoids a lot of false "passive"/"past" tags. */
+const EXCLUDE_ED_WORDS = new Set([
+  "tired","bored","interested","excited","confused","relaxed","worried","annoyed","scared","embarrassed",
+  "surprised","pleased","satisfied","disappointed","frightened","shocked","amazed","concerned","stressed",
+  "depressed","married","talented","gifted","skilled","crowded","complicated","detailed","limited","advanced",
+  "need","speed","feed","breed","exceed","proceed","succeed","indeed","seed","weed","bleed","embed"
+]);
+
+const COMMON_VERBS = new Set(["be","go","do","make","have","get","take","give","help","study","play","eat","write","read",
+  "watch","listen","work","live","buy","sell","travel","visit","meet","call","ask","answer","open","close","start","stop",
+  "finish","decide","want","need","like","love","hope","plan","try","forget","remember","promise","agree","refuse","learn",
+  "speak","talk","walk","run","swim","drive","fly","cook","clean","wash","sleep","wake","stay","leave","arrive","understand",
+  "know","think","believe","feel","see","hear","bring","send","teach","show","tell","find","lose","win","build","break",
+  "fix","paint","draw","sing","dance","enjoy","cost","use","move","turn","wait","join","offer","carry","pay","follow"]);
+const NON_ADJ_ER = new Set(["after","under","over","number","water","summer","winter","other","another","together","however",
+  "whether","neither","either","mother","father","brother","sister","weather","letter","matter","computer","paper","order",
+  "power","answer","never","ever","enter","center","finger","dinner","corner","teacher","doctor","driver","player","worker",
+  "manager","member","partner","customer","river","offer","proper","chapter","master","monster","tiger","cover"]);
+const NON_ADJ_EST = new Set(["guest","forest","honest","interest","rest","test","west","chest","protest","request","suggest"]);
+
+/* Expand common contractions so the analyzer can "see" negatives and short forms
+   (isn't -> is not, I'm -> I am, etc.) — this alone catches a lot of real sentences. */
+const CONTRACTIONS = [
+  [/\bwon't\b/gi, "will not"], [/\bcan't\b/gi, "can not"], [/\bshan't\b/gi, "shall not"],
+  [/\bain't\b/gi, "am not"], [/\bcouldn't\b/gi, "could not"], [/\bshouldn't\b/gi, "should not"],
+  [/\bwouldn't\b/gi, "would not"], [/\bmustn't\b/gi, "must not"], [/\bmightn't\b/gi, "might not"],
+  [/\bisn't\b/gi, "is not"], [/\baren't\b/gi, "are not"], [/\bwasn't\b/gi, "was not"], [/\bweren't\b/gi, "were not"],
+  [/\bhasn't\b/gi, "has not"], [/\bhaven't\b/gi, "have not"], [/\bhadn't\b/gi, "had not"],
+  [/\bdon't\b/gi, "do not"], [/\bdoesn't\b/gi, "does not"], [/\bdidn't\b/gi, "did not"],
+  [/\bi'm\b/gi, "i am"], [/\byou're\b/gi, "you are"], [/\bwe're\b/gi, "we are"], [/\bthey're\b/gi, "they are"],
+  [/\bi've\b/gi, "i have"], [/\byou've\b/gi, "you have"], [/\bwe've\b/gi, "we have"], [/\bthey've\b/gi, "they have"],
+  [/\bi'll\b/gi, "i will"], [/\byou'll\b/gi, "you will"], [/\bhe'll\b/gi, "he will"], [/\bshe'll\b/gi, "she will"],
+  [/\bwe'll\b/gi, "we will"], [/\bthey'll\b/gi, "they will"], [/\bit'll\b/gi, "it will"],
+  [/\bthat's\b/gi, "that is"], [/\bwhat's\b/gi, "what is"], [/\bthere's\b/gi, "there is"], [/\bhere's\b/gi, "here is"],
+];
+function expandContractions(text){
+  let out = text;
+  CONTRACTIONS.forEach(([re,rep])=>{ out = out.replace(re, rep); });
+  return out;
+}
+/* If the next token is "not", skip it and return the index after it — lets every
+   auxiliary+verb rule below recognise negative forms too (is not going, has not eaten...). */
+function nextContentIndex(words, i){
+  return (words[i+1]==="not") ? i+2 : i+1;
+}
+
+function analyzeLocally(sentence){
+  const expanded = expandContractions(sentence.trim());
+  const clean = expanded;
+  const lower = clean.toLowerCase();
+  const rawWords = clean.match(/[A-Za-z']+/g) || [];
+  const words = rawWords.map(w=>w.toLowerCase());
+  const n = words.length;
+  const used = new Array(n).fill(false);
+  const found = []; // {label, quote}
+  const isProperNounAt = (i) => i>0 && i<n && /^[A-Z]/.test(rawWords[i]||"");
+
+  const add = (label, quoteWords) => found.push({label, quote: quoteWords.filter(Boolean).join(" ")});
+
+  // 1) going to future
+  for(let i=0;i<n-2;i++){
+    if(!used[i] && words[i]==="going" && words[i+1]==="to" && /^[a-z]+$/.test(words[i+2])){
+      used[i]=used[i+1]=used[i+2]=true;
+      add("زمان آینده (going to)", [words[i-1]||"", "going","to",words[i+2]]);
+    }
+  }
+  // 2) be + (not) + V-ing  -> continuous (negation-aware)
+  for(let i=0;i<n-1;i++){
+    if(used[i]) continue;
+    const j = nextContentIndex(words, i);
+    if(!used[j] && BE.has(words[i]) && words[j] && words[j].endsWith("ing")){
+      used[i]=true; if(j===i+2) used[i+1]=true; used[j]=true;
+      const label = (words[i]==="am"||words[i]==="is"||words[i]==="are") ? "حال استمراری (Present Continuous)" : "گذشته استمراری (Past Continuous)";
+      add(label, [words[i], j===i+2?"not":"", words[j]]);
+    }
+  }
+  // 3) have + (not) + been + V-ing -> perfect continuous (negation-aware)
+  for(let i=0;i<n-2;i++){
+    if(used[i]) continue;
+    const j = nextContentIndex(words, i);
+    if(HAVE.has(words[i]) && words[j]==="been" && words[j+1] && words[j+1].endsWith("ing")){
+      used[i]=true; if(j===i+2) used[i+1]=true; used[j]=true; used[j+1]=true;
+      add("حال/گذشته کامل استمراری (Perfect Continuous)", [words[i], j===i+2?"not":"", "been", words[j+1]]);
+    }
+  }
+  // 4) have/has/had + (not) + past participle -> perfect (negation-aware)
+  for(let i=0;i<n-1;i++){
+    if(used[i]) continue;
+    const j = nextContentIndex(words, i);
+    if(!used[j] && HAVE.has(words[i]) && words[j] && isPPForm(words[j]) && words[j]!=="been"){
+      used[i]=true; if(j===i+2) used[i+1]=true; used[j]=true;
+      const label = words[i]==="had" ? "گذشته کامل (Past Perfect)" : "حال کامل (Present Perfect)";
+      add(label, [words[i], j===i+2?"not":"", words[j]]);
+    }
+  }
+  // 5) be + (not) + past participle -> passive (negation-aware)
+  for(let i=0;i<n-1;i++){
+    if(used[i]) continue;
+    const j = nextContentIndex(words, i);
+    if(!used[j] && BE.has(words[i]) && words[j] && isPPForm(words[j])){
+      used[i]=true; if(j===i+2) used[i+1]=true; used[j]=true;
+      add("جمله مجهول (Passive Voice)", [words[i], j===i+2?"not":"", words[j]]);
+    }
+  }
+  // 6) will -> future
+  for(let i=0;i<n;i++){
+    if(!used[i] && words[i]==="will"){
+      used[i]=true;
+      add("زمان آینده (will)", [words[i], words[i+1]||""]);
+    }
+  }
+  // 7) other modals
+  for(let i=0;i<n;i++){
+    if(!used[i] && MODALS.has(words[i])){
+      used[i]=true;
+      add("فعل کمکی وجهی (Modal: " + words[i] + ")", [words[i], words[i+1]||""]);
+    }
+  }
+  // "have to" / "has to" / "had to"
+  for(let i=0;i<n-1;i++){
+    if(!used[i] && !used[i+1] && HAVE.has(words[i]) && words[i+1]==="to"){
+      used[i]=used[i+1]=true;
+      add("فعل کمکی وجهی (have to)", [words[i], "to", words[i+2]||""]);
+    }
+  }
+  // 8) standalone be forms -> present/past simple (verb "to be")
+  for(let i=0;i<n;i++){
+    if(!used[i] && BE.has(words[i]) && words[i]!=="be" && words[i]!=="been" && words[i]!=="being"){
+      used[i]=true;
+      const label = (words[i]==="am"||words[i]==="is"||words[i]==="are") ? "حال ساده (Present Simple - فعل to be)" : "گذشته ساده (Past Simple - فعل to be)";
+      add(label, [words[i]]);
+    }
+  }
+  // 9) past simple (regular -ed or irregular), not consumed
+  for(let i=0;i<n;i++){
+    if(!used[i] && isPastForm(words[i])){
+      used[i]=true;
+      add("گذشته ساده (Past Simple)", [words[i]]);
+    }
+  }
+  // 10) do/does/did (+ not) -> present or past simple markers
+  for(let i=0;i<n;i++){
+    if(!used[i] && (words[i]==="do" || words[i]==="does")){
+      used[i]=true;
+      const j = nextContentIndex(words, i);
+      if(j===i+2 && words[i+1]) used[i+1]=true;
+      if(words[j]) used[j]=true;
+      add("حال ساده (Present Simple)", [words[i], j===i+2?"not":"", words[j]||""]);
+    } else if(!used[i] && words[i]==="did"){
+      used[i]=true;
+      const j = nextContentIndex(words, i);
+      if(j===i+2 && words[i+1]) used[i+1]=true;
+      if(words[j]) used[j]=true;
+      add("گذشته ساده (Past Simple)", [words[i], j===i+2?"not":"", words[j]||""]);
+    }
+  }
+  // 10b) present simple fallback — 3rd person singular verb ending in -s
+  for(let i=0;i<n;i++){
+    if(!used[i] && words[i].endsWith("s") && !words[i].endsWith("ss") && words[i].length>3
+       && !BE.has(words[i]) && !HAVE.has(words[i]) && !MODALS.has(words[i])
+       && !COMPARATIVES.has(words[i]) && !SUPERLATIVES.has(words[i])){
+      const prev = words[i-1]||"";
+      if(prev==="he" || prev==="she" || prev==="it" || isProperNounAt(i-1)){
+        used[i]=true;
+        add("حال ساده (Present Simple)", [prev, words[i]]);
+      }
+    }
+  }
+  // 10c) present simple fallback — base-form verb after I/you/we/they
+  for(let i=1;i<n;i++){
+    if(!used[i] && COMMON_VERBS.has(words[i])){
+      const prev = words[i-1]||"";
+      if(["i","you","we","they"].includes(prev)){
+        used[i]=true;
+        add("حال ساده (Present Simple)", [prev, words[i]]);
+      }
+    }
+  }
+  // 11) reported speech (reporting verb + no direct quotation marks)
+  const reportVerbs = [" said"," told"," asked"," explained"," replied"," answered"," mentioned"," admitted"];
+  if(reportVerbs.some(v=>lower.includes(v) || lower.startsWith(v.trim())) && !clean.includes('"') && !clean.includes("'")){
+    add("نقل قول غیرمستقیم (Reported Speech)", ["said/told/asked", "..."]);
+  }
+  // 12) relative clauses
+  for(let i=1;i<n;i++){
+    if(!used[i] && ["who","which","whose","where"].includes(words[i])){
+      used[i]=true;
+      add("جمله موصولی (Relative Clause: " + words[i] + ")", [words[i-1], words[i]]);
+    }
+  }
+  // 13) conditionals — split into if-clause / result-clause using the comma when present
+  if(/\bif\b|\bunless\b/.test(lower)){
+    let ifPart = lower, resultPart = lower;
+    if(clean.includes(",")){
+      const parts = lower.split(",");
+      const idx = parts.findIndex(p=>/\bif\b|\bunless\b/.test(p));
+      if(idx !== -1){ ifPart = parts[idx]; resultPart = parts.filter((_,i)=>i!==idx).join(" "); }
+    }
+    const ifTokens = (ifPart.match(/[a-z']+/g)||[]);
+    const ifHasPast = ifTokens.some(w => isPastForm(w) && w!=="if");
+    const ifHasHadPP = /\bhad\b/.test(ifPart) && ifTokens.some(w=>isPPForm(w) && w!=="had");
+    const resultHasWouldHave = /would have\s+\w+/.test(resultPart);
+    const resultHasWould = /\bwould\b/.test(resultPart) && !resultHasWouldHave;
+    const resultHasWill = /\bwill\b/.test(resultPart);
+
+    if(resultHasWouldHave && ifHasHadPP){
+      add("شرطی نوع سوم (Third Conditional)", ["if", "...", "would have", "..."]);
+    } else if(resultHasWould && (ifPart.includes(" were") || ifPart.includes(" was") || ifHasPast)){
+      add("شرطی نوع دوم (Second Conditional)", ["if", "...", "would", "..."]);
+    } else if(resultHasWill){
+      add("شرطی نوع اول (First Conditional)", ["if", "...", "will", "..."]);
+    } else {
+      add("شرطی نوع صفر (Zero Conditional)", ["if", "..."]);
+    }
+  }
+  // 14) articles
+  const artCount = words.filter(w=>w==="a"||w==="an"||w==="the").length;
+  if(artCount>0){
+    add("حروف تعریف (Articles: a/an/the)", ["×" + artCount]);
+  }
+  // 15) prepositions of time/place
+  for(let i=0;i<n-1;i++){
+    if(["at","on","in"].includes(words[i])){
+      const next = words[i+1];
+      if(TIME_WORDS.has(next) || /^\d{3,4}$/.test(next) || (next==="the" && TIME_WORDS.has(words[i+2]))){
+        add("حرف اضافه‌ی زمان (" + words[i] + ")", [words[i], next]);
+      } else {
+        add("حرف اضافه‌ی مکان (" + words[i] + ")", [words[i], next]);
+      }
+    }
+  }
+  // 16) comparatives / superlatives (with stoplists to avoid false positives)
+  for(let i=0;i<n;i++){
+    const w = words[i];
+    if(COMPARATIVES.has(w) || (w.endsWith("er") && w.length>4 && !BE.has(w) && !NON_ADJ_ER.has(w))){
+      add("صفت تفضیلی (Comparative)", [w]);
+    }
+    if(SUPERLATIVES.has(w) || (w.endsWith("est") && w.length>5 && !NON_ADJ_EST.has(w))){
+      add("صفت عالی (Superlative)", [w]);
+    }
+    if(w==="more" && words[i+1] && !HAVE.has(words[i+1]) && !BE.has(words[i+1])){
+      add("صفت تفضیلی (more + adj)", [w, words[i+1]]);
+    }
+    if(w==="most" && words[i+1]){
+      add("صفت عالی (most + adj)", [w, words[i+1]]);
+    }
+  }
+  // 17) gerunds (gerund used as noun/object) and infinitives (restricted to common verbs to cut false positives)
+  for(let i=0;i<n;i++){
+    if(!used[i] && words[i].endsWith("ing") && words[i].length>4){
+      const prev = words[i-1]||"";
+      if(GERUND_TRIGGERS.has(prev) || i===0){
+        add("اسم مصدر (Gerund: " + words[i] + ")", [prev, words[i]]);
+      }
+    }
+    if(words[i]==="to" && words[i+1] && words[i-1]!=="going" && COMMON_VERBS.has(words[i+1])){
+      add("مصدر با to (Infinitive: to " + words[i+1] + ")", ["to", words[i+1]]);
+    }
+  }
+
+  // de-duplicate identical labels
+  const seen = new Set();
+  const unique = found.filter(f=>{
+    const key = f.label;
+    if(seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+  return unique;
+}
+
+/* ============ ANALYZER VIEW ============ */
+function renderAnalyzer(){
+  const main = document.getElementById("main");
+  main.innerHTML = `
+    <button class="mobile-back" id="mobile-back-btn">→ بازگشت</button>
+    <div class="analyzer-wrap">
+      <h2>تحلیلگر گرامر جمله</h2>
+      <p class="hint">هر جمله‌ی انگلیسی بنویس تا گرامرهای استفاده‌شده توش رو برات فهرست کنم. این تحلیل بر اساس یک موتور قاعده‌محور ساده کار می‌کنه (بدون هوش مصنوعی)، پس ممکنه جمله‌های پیچیده یا غیرمعمول رو کامل تشخیص نده.</p>
+      <textarea id="analyzer-input" rows="3" placeholder="Type any English sentence here..."></textarea>
+      <div class="row-btn"><button class="primary" id="analyze-btn">تحلیل کن</button></div>
+      <div class="result-box" id="analyzer-result"></div>
+    </div>
+  `;
+  document.getElementById("mobile-back-btn").addEventListener("click", ()=>{
+    setTab("topics");
+    renderAll();
+  });
+  document.getElementById("analyze-btn").addEventListener("click", ()=>{
+    const val = document.getElementById("analyzer-input").value.trim();
+    const box = document.getElementById("analyzer-result");
+    if(!val){
+      box.className = "result-box show bad";
+      box.textContent = "اول یه جمله بنویس.";
+      return;
+    }
+    const results = analyzeLocally(val);
+    box.className = "result-box show neutral";
+    if(results.length===0){
+      box.textContent = "هیچ ساختار گرامری مشخصی در این جمله پیدا نشد. جمله‌ی دیگه‌ای امتحان کن.";
+    } else {
+      box.textContent = results.map(r => "• " + r.label + "   →   «" + r.quote + "»").join("\n");
+    }
+  });
+}
+
+/* ============ LEARNING PATH VIEW ============ */
+function renderPath(){
+  const main = document.getElementById("main");
+  const total = totalTopicCount();
+  const doneCount = completedTopics.size;
+  const pct = total ? Math.round((doneCount/total)*100) : 0;
+  let stepCounter = 0;
+
+  const levelsHtml = LEARNING_PATH.map(lv=>{
+    const topics = lv.ids.map(id=>findTopic(id)).filter(Boolean);
+    const doneInLevel = topics.filter(t=>completedTopics.has(t.id)).length;
+    const allDone = topics.length>0 && doneInLevel === topics.length;
+    const cardsHtml = topics.map(t=>{
+      stepCounter++;
+      const done = completedTopics.has(t.id);
+      return `
+        <div class="path-card${done?' done':''}" data-id="${t.id}">
+          <span class="check-icon">✓</span>
+          <div class="step-no">مرحله ${stepCounter}</div>
+          <span class="en">${t.en}</span>
+          <div class="fa">${t.fa}</div>
+        </div>`;
+    }).join("");
+    return `
+      <div class="level-block${allDone?' all-done':''}">
+        <div class="level-block-head">
+          <span class="level-badge">${lv.level}</span>
+          <h3>${lv.label}</h3>
+          <span class="mini-progress">${doneInLevel}/${topics.length}</span>
+        </div>
+        <div class="path-grid">${cardsHtml}</div>
+        <div class="level-complete-banner">🎉 آفرین! تمام گرامرهای سطح ${lv.level} رو یاد گرفتی.</div>
+      </div>`;
+  }).join("");
+
+  main.innerHTML = `
+    <button class="mobile-back" id="mobile-back-btn">→ بازگشت</button>
+    <div class="path-wrap">
+      <h2>مسیر یادگیری گرامر</h2>
+      <p class="hint">این مسیر، گرامرها رو به همون ترتیبی که معمولاً توی کتاب‌های آموزشی تدریس می‌شن مرتب کرده — از پایه تا پیشرفته. روی هر کارت بزن تا بری توی همون درس، و بعد از یادگیری دکمه‌ی «یاد گرفتم» رو بزن تا پیشرفتت ثبت بشه.</p>
+
+      <div class="overall-progress">
+        <div class="row"><strong>پیشرفت کلی</strong><span>${doneCount} / ${total} — ${pct}%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+      </div>
+
+      ${levelsHtml}
+    </div>
+  `;
+
+  document.getElementById("mobile-back-btn").addEventListener("click", ()=>{
+    setTab("topics");
+    renderAll();
+  });
+  main.querySelectorAll(".path-card").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      currentTopicId = card.dataset.id;
+      setTab("topics");
+      renderAll();
+    });
+  });
+}
+
+/* ============ TAB CONTROL ============ */
+function setTab(tab){
+  currentTab = tab;
+  document.getElementById("tab-topics").classList.toggle("active", tab==="topics");
+  document.getElementById("tab-path").classList.toggle("active", tab==="path");
+  document.getElementById("tab-analyzer").classList.toggle("active", tab==="analyzer");
+}
+document.getElementById("tab-topics").addEventListener("click", ()=>{ setTab("topics"); renderAll(); });
+document.getElementById("tab-path").addEventListener("click", ()=>{ setTab("path"); renderAll(); });
+document.getElementById("tab-analyzer").addEventListener("click", ()=>{ setTab("analyzer"); renderAll(); });
+
+function renderAll(){
+  if(currentTab === "topics") renderTopic();
+  else if(currentTab === "path") renderPath();
+  else renderAnalyzer();
+  updateMobileBodyClass();
+}
+
+function updateMobileBodyClass(){
+  const isMobile = window.matchMedia("(max-width: 860px)").matches;
+  const showingDetail = isMobile && (currentTab === "analyzer" || currentTab === "path" || (currentTab === "topics" && !!currentTopicId));
+  document.body.classList.toggle("mobile-detail", showingDetail);
+  if(showingDetail) window.scrollTo(0,0);
+}
+window.addEventListener("resize", updateMobileBodyClass);
+
+/* ============ INIT ============ */
+renderSidebar();
+renderAll();
+</script>
+</body>
+</html>
